@@ -1,13 +1,10 @@
 import React from 'react';
-// import Navigation from '../../components/Navigation';
-import { Button } from 'antd-mobile';
-
+import Navigation from '../../components/Navigation';
 export default class Home extends React.Component {
     render() {
         return (
             <div>
-                <Button>111</Button>
-                {/* <Navigation /> */}
+                <Navigation />
             </div>
         );
     }
