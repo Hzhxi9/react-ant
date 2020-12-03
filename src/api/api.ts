@@ -1,4 +1,6 @@
 import request from '../utils/request';
+import * as ReqTypes from '../types/request';
+import * as ResTypes from '../types/response';
 
 /**
  * 获取验证码
@@ -67,18 +69,17 @@ export function searchPois(params: any) {
 /**
  * 根据经纬度获取地点信息
  */
-export function getPoisSite(params: any) {
+export function getPoisSite(params: string) {
     return request({
         method: 'GET',
-        url: '/v2/pois/',
-        params,
+        url: '/v2/pois/' + params,
     });
 }
 
 /**
  * 获取食物种类
  */
-export function getFoodTypes(params: any) {
+export function getFoodTypes(params: ReqTypes.FoodTypeParams): Promise<ResTypes.FootTypeData[]> {
     return request({
         method: 'GET',
         url: '/v2/index_entry/',
@@ -89,10 +90,10 @@ export function getFoodTypes(params: any) {
 /**
  * 猜测城市
  */
-export function cityGuess(params: any) {
+export function cityGuess(params: { type: string }): Promise<ResTypes.CityGuessData> {
     return request({
         method: 'GET',
-        url: '/v1/cities?type=guess',
+        url: '/v1/cities',
         params,
     });
 }
@@ -100,7 +101,7 @@ export function cityGuess(params: any) {
 /**
  * 获取商店列表
  */
-export function getShopList(params: any) {
+export function getShopList(params: { latitude: number; longitude: number }): Promise<ResTypes.ShopData> {
     return request({
         method: 'GET',
         url: '/shopping/restaurants/',

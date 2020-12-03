@@ -9,6 +9,8 @@ import { AppContainer } from 'react-hot-loader';
 
 import './assets/styles/base.scss';
 
+import * as serviceWorker from './serviceWorker';
+
 FastClick.attach(document.body);
 
 ReactDOM.render(
@@ -17,3 +19,5 @@ ReactDOM.render(
     </React.StrictMode>,
     document.getElementById('root')
 );
+
+serviceWorker.unregister();

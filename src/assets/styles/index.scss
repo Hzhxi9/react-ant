@@ -1,0 +1,21 @@
+.tabbar {
+    position: fixed;
+    // height: 100%;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    img {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.navbar {
+    img {
+        width: 5.333vw;
+        height: auto;
+    }
+    > .am-navbar-title {
+        font-size: 4.267vw;
+    }
+}
