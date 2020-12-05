@@ -9,6 +9,8 @@ import { saveAttrInfo } from '../../actions/user';
 
 import * as ResType from '../../types/response';
 
+import './Home.scss'
+
 type HomeState = {
     geohash: string[];
     foodsType: ResType.FootTypeData[][];
@@ -17,14 +19,18 @@ type HomeState = {
     imgBaseUrl: string;
 };
 class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; value: string[] }> }, HomeState> {
-    constructor(props: any) {
+    constructor(
+        props:
+            | { saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }> }
+            | Readonly<{ saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }> }>
+    ) {
         super(props);
         this.state = {
             geohash: [],
             foodsType: [],
             title: '',
             text: '',
-            imgBaseUrl: '',
+            imgBaseUrl: 'https://fuss10.elemecdn.com',
         };
     }
 
@@ -94,7 +100,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
     }
 
     render() {
-        const { title, foodsType } = this.state;
+        const { title, foodsType, imgBaseUrl } = this.state;
 
         return (
             <div>
@@ -109,11 +115,16 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
                     >
                         {foodsType.map((element, index) => {
                             return (
-                                <div className='menu' key={index}>
+                                <ul className='food-list' key={index}>
                                     {element.map((item, i) => {
-                                        return <div key={i}>{item.title}</div>;
+                                        return (
+                                            <li className='food-item' key={i}>
+                                                <img src={imgBaseUrl + item.image_url} alt={item.title} />
+                                                <p>{item.title}</p>
+                                            </li>
+                                        );
                                     })}
-                                </div>
+                                </ul>
                             );
                         })}
                     </Carousel>
