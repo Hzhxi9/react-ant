@@ -6,12 +6,13 @@ import MineIcon from '../assets/images/wode.png';
 
 import '../assets/styles/index.scss';
 
-export default class Header extends React.Component {
+export default class Header extends React.Component<{ title: string }, any> {
     goBack = () => {
         console.log('back');
     };
 
     render() {
+        const { title } = this.props;
         return (
             <NavBar
                 className='navbar'
@@ -20,7 +21,7 @@ export default class Header extends React.Component {
                 onLeftClick={this.goBack}
                 rightContent={<img src={MineIcon} alt='我的' />}
             >
-                越秀区广州市政府(府前路北)
+                {title}
             </NavBar>
         );
     }

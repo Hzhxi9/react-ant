@@ -15,8 +15,8 @@ export interface CityGuessData {
     area_code: string;
     id: number;
     is_map: boolean;
-    latitude: number;
-    longitude: number;
+    latitude: string;
+    longitude: string;
     name: string;
     pinyin: string;
     sort: number;

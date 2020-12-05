@@ -32,6 +32,6 @@ export default function request(config: AxiosRequestConfig) {
         if (typeof res.data !== 'object') {
             return Promise.reject(res.data);
         }
-        return Promise.resolve(res.data.data);
+        return Promise.resolve(res.data);
     });
 }
