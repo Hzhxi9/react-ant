@@ -5,8 +5,9 @@ import ShopList from '../../components/ShopList';
 
 import { connect } from 'react-redux';
 import { Carousel } from 'antd-mobile';
-import { getFoodTypes, getPoisSite, cityGuess, getShopList } from '../../api/api';
 import { saveAttrInfo } from '../../actions/user';
+import { is, fromJS } from 'immutable';
+import { getFoodTypes, getPoisSite, cityGuess, getShopList } from '../../api/api';
 
 import * as ResType from '../../types/response';
 
@@ -121,6 +122,14 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
         this.cityGuess();
     }
 
+    /**
+     * 判断是否要更新render, return true 更新  return false不更新
+     */
+    shouldComponentUpdate(nextProps: any, nextState: any):boolean{
+        let refresh = !is(fromJS(this.props), fromJS(nextProps)) || !is(fromJS(this.state), fromJS(nextState));
+        return refresh;
+    }
+
     render() {
         const { title, foodsType, imgBaseUrl, shopList } = this.state;
 
@@ -151,7 +160,9 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
                         })}
                     </Carousel>
 
-                    <ShopList list={shopList}  />
+                    <div className='shop'>
+                        <ShopList list={shopList} />
+                    </div>
                 </div>
 
                 <Navigation />

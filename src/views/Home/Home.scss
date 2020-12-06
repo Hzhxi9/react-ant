@@ -21,4 +21,8 @@
             }
         }
     }
+    .shop{
+        height: calc(100vh - 45px -  50px - 46.667vw);
+        overflow: auto;
+    }
 }
