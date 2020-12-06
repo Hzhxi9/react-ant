@@ -50,7 +50,7 @@ export interface ShopData {
     rating_count: number;
     recent_order_num: number;
     status: number;
-    supports: SupportsData;
+    supports: SupportsData[];
 }
 
 export interface ActivitiesData {

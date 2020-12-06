@@ -101,11 +101,11 @@ export function cityGuess(params: { type: string }): Promise<ResTypes.CityGuessD
 /**
  * 获取商店列表
  */
-export function getShopList(params: { latitude: number; longitude: number }): Promise<ResTypes.ShopData> {
+export function getShopList(params: { latitude: string; longitude: string }): Promise<ResTypes.ShopData[]> {
+    console.log(params,'params')
     return request({
         method: 'GET',
-        url: '/shopping/restaurants/',
-        params,
+        url: `/shopping/restaurants/?latitude=${params.latitude}&longitude=${params.longitude}`,
     });
 }
 

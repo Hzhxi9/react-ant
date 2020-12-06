@@ -1,19 +1,21 @@
 import React, { Dispatch } from 'react';
 import Navigation from '../../components/Navigation';
 import Header from '../../components/Header';
+import ShopList from '../../components/ShopList';
 
 import { connect } from 'react-redux';
 import { Carousel } from 'antd-mobile';
-import { getFoodTypes, getPoisSite, cityGuess } from '../../api/api';
+import { getFoodTypes, getPoisSite, cityGuess, getShopList } from '../../api/api';
 import { saveAttrInfo } from '../../actions/user';
 
 import * as ResType from '../../types/response';
 
-import './Home.scss'
+import './Home.scss';
 
 type HomeState = {
     geohash: string[];
     foodsType: ResType.FootTypeData[][];
+    shopList: ResType.ShopData[];
     title: string;
     text: string;
     imgBaseUrl: string;
@@ -28,6 +30,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
         this.state = {
             geohash: [],
             foodsType: [],
+            shopList: [],
             title: '',
             text: '',
             imgBaseUrl: 'https://fuss10.elemecdn.com',
@@ -40,7 +43,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
     getFoodTypes = async () => {
         try {
             const data = {
-                geohash: this.state.geohash,
+                geohash: this.state.geohash.join(),
                 'flag[]': 'F',
                 group_type: 1,
             };
@@ -87,6 +90,25 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
             this.props.saveAttrInfo({ dataType: 'geohash', value: [res.latitude, res.longitude] });
             this.getPoisSite(this.state.geohash.join());
             this.getFoodTypes();
+            this.getShopList(this.state.geohash);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    /**
+     * 获取商家列表
+     */
+    getShopList = async (geohash: string[]) => {
+        try {
+            const data = {
+                latitude: geohash[0],
+                longitude: geohash[1],
+            };
+            const res = await getShopList(data);
+            this.setState({
+                shopList: res,
+            });
         } catch (error) {
             console.log(error);
         }
@@ -100,7 +122,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
     }
 
     render() {
-        const { title, foodsType, imgBaseUrl } = this.state;
+        const { title, foodsType, imgBaseUrl, shopList } = this.state;
 
         return (
             <div>
@@ -128,6 +150,8 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
                             );
                         })}
                     </Carousel>
+
+                    <ShopList list={shopList}  />
                 </div>
 
                 <Navigation />

@@ -1,5 +1,5 @@
 export interface FoodTypeParams {
-    geohash: string[];
+    geohash: string;
     'flag[]': string;
     group_type: number;
 }
