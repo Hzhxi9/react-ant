@@ -2,6 +2,9 @@ import React, { Dispatch } from 'react';
 import Navigation from '../../components/Navigation';
 import Header from '../../components/Header';
 import ShopList from '../../components/ShopList';
+import Loader from '../../components/Loader';
+import FoodTypeSkeleton from '../../components/FoodTypeSkeleton';
+import ShopListSkeleton from '../../components/ShopListSkeleton';
 
 import { connect } from 'react-redux';
 import { Carousel } from 'antd-mobile';
@@ -18,7 +21,6 @@ type HomeState = {
     foodsType: ResType.FootTypeData[][];
     shopList: ResType.ShopData[];
     title: string;
-    text: string;
     imgBaseUrl: string;
 };
 class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; value: string[] }> }, HomeState> {
@@ -32,8 +34,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
             geohash: [],
             foodsType: [],
             shopList: [],
-            title: '',
-            text: '',
+            title: '正在获取...',
             imgBaseUrl: 'https://fuss10.elemecdn.com',
         };
     }
@@ -125,7 +126,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
     /**
      * 判断是否要更新render, return true 更新  return false不更新
      */
-    shouldComponentUpdate(nextProps: any, nextState: any):boolean{
+    shouldComponentUpdate(nextProps: any, nextState: any): boolean {
         let refresh = !is(fromJS(this.props), fromJS(nextProps)) || !is(fromJS(this.state), fromJS(nextState));
         return refresh;
     }
@@ -138,31 +139,28 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
                 <Header title={title} />
 
                 <div className='content'>
-                    <Carousel
-                        autoplay={false}
-                        infinite
-                        beforeChange={(from, to) => console.log(`slide from ${from} to ${to}`)}
-                        afterChange={(index) => console.log('slide to', index)}
-                    >
-                        {foodsType.map((element, index) => {
-                            return (
-                                <ul className='food-list' key={index}>
-                                    {element.map((item, i) => {
-                                        return (
-                                            <li className='food-item' key={i}>
-                                                <img src={imgBaseUrl + item.image_url} alt={item.title} />
-                                                <p>{item.title}</p>
-                                            </li>
-                                        );
-                                    })}
-                                </ul>
-                            );
-                        })}
-                    </Carousel>
+                    {foodsType.length ? (
+                        <Carousel autoplay={false} infinite>
+                            {foodsType.map((element, index) => {
+                                return (
+                                    <ul className='food-list' key={index}>
+                                        {element.map((item, i) => {
+                                            return (
+                                                <li className='food-item' key={i}>
+                                                    <img src={imgBaseUrl + item.image_url} alt={item.title} />
+                                                    <p>{item.title}</p>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                );
+                            })}
+                        </Carousel>
+                    ) : (
+                        <FoodTypeSkeleton />
+                    )}
 
-                    <div className='shop'>
-                        <ShopList list={shopList} />
-                    </div>
+                    <div className='shop'>{shopList.length ? <ShopList list={shopList} /> : <ShopListSkeleton />}</div>
                 </div>
 
                 <Navigation />

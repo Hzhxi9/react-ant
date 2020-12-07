@@ -11,6 +11,7 @@ export default class RouteConfig extends React.Component {
                 <Switch>
                     <Redirect from='/' to='/home' exact />
                     <Route path='/home' exact component={AsyncComponent(() => import('../views/Home/Home'))} />
+                    <Route path='/mine' exact component={AsyncComponent(() => import('../views/Mine/Mine'))} />
                 </Switch>
             </Router>
         );

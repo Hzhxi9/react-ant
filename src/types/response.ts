@@ -83,3 +83,25 @@ export interface SupportsData {
     name: string;
     _id: string;
 }
+
+export interface loginData {
+    avatar: string;
+    balance: number;
+    brand_member_new: number;
+    city: string;
+    current_address_id: number;
+    current_invoice_id: number;
+    delivery_card_expire_days: number;
+    email: string;
+    gift_amount: number;
+    id: number;
+    is_active: number;
+    is_email_valid: boolean;
+    is_mobile_valid: boolean;
+    mobile: string;
+    point: number;
+    registe_time: string;
+    user_id: number;
+    username: string;
+    _id: string;
+}

@@ -1,3 +1,5 @@
+@import './animate.scss';
+
 .tabbar {
     position: fixed;
     // height: 100%;
@@ -68,6 +70,139 @@
                                     color: #666;
                                 }
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.loader-container {
+    padding: 5px;
+    width: 50px;
+    height: 50px;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: rgba(29, 29, 29, 0.07) 5px 5px 50px 5px;
+    .loader-main {
+        display: inline-block;
+        border: 4px solid rgba(0, 0, 0, 0);
+        border-left-color: #7983ff;
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        animation: loading 3s linear infinite;
+    }
+}
+
+.food-skeleton {
+    display: flex;
+    flex-wrap: wrap;
+    height: 46.667vw;
+    li {
+        flex-basis: 25%;
+        height: 15.517vw;
+        margin: 1.867vw 0;
+
+        div {
+            height: 100%;
+            margin: 0 0.467vw;
+            background-color: #c0c4cc;
+            border-radius: 0.8vw;
+
+            animation: skeleton-loading 1.4s ease infinite;
+            -webkit-animation: skeleton-loading 1.4s ease infinite;
+            background-image: -webkit-gradient(
+                linear,
+                left top,
+                right top,
+                color-stop(25%, #c0c4cc),
+                color-stop(37%, #e3e3e3),
+                color-stop(63%, #c0c4cc)
+            );
+            background-image: -o-linear-gradient(left, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+            background-image: linear-gradient(90deg, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+            background-size: 400% 100%;
+        }
+    }
+}
+
+.shop-skeleton {
+    h3 {
+        width: 50%;
+        height: 5.6vw;
+        margin: 1.875vw;
+        border-radius: 0.8vw;
+        animation: skeleton-loading 1.4s ease infinite;
+        -webkit-animation: skeleton-loading 1.4s ease infinite;
+        background-image: -webkit-gradient(
+            linear,
+            left top,
+            right top,
+            color-stop(25%, #c0c4cc),
+            color-stop(37%, #e3e3e3),
+            color-stop(63%, #c0c4cc)
+        );
+        background-image: -o-linear-gradient(left, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+        background-image: linear-gradient(90deg, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+        background-size: 400% 100%;
+    }
+    ul {
+        li {
+            display: flex;
+            padding: 4.375vw 1.875vw;
+            div {
+                &:first-child {
+                    width: 16.875vw;
+                    height: 16.875vw;
+                    border-radius: 0.8vw;
+                    margin-right: 2.5vw;
+                    animation: skeleton-loading 1.4s ease infinite;
+                    -webkit-animation: skeleton-loading 1.4s ease infinite;
+                    background-image: -webkit-gradient(
+                        linear,
+                        left top,
+                        right top,
+                        color-stop(25%, #c0c4cc),
+                        color-stop(37%, #e3e3e3),
+                        color-stop(63%, #c0c4cc)
+                    );
+                    background-image: -o-linear-gradient(left, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+                    background-image: linear-gradient(90deg, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+                    background-size: 400% 100%;
+                }
+                &:last-child {
+                    width: 60%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-around;
+                    p {
+                        height: 5.067vw;
+                        border-radius: 0.8vw;
+                        animation: progress1 1.4s ease infinite;
+                        -webkit-animation: progress1 1.4s ease infinite;
+                        background-image: -webkit-gradient(
+                            linear,
+                            left top,
+                            right top,
+                            color-stop(25%, #c0c4cc),
+                            color-stop(37%, #e3e3e3),
+                            color-stop(63%, #c0c4cc)
+                        );
+                        background-image: -o-linear-gradient(left, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+                        background-image: linear-gradient(90deg, #c0c4cc 25%, #e3e3e3 37%, #c0c4cc 63%);
+                        background-size: 400% 100%;
+                        &:nth-of-type(2) {
+                            animation-delay: 0.2s;
+                            animation: progress2 1.4s ease infinite;
+                            -webkit-animation: progress2 1.4s ease infinite;
+                        }
+                        &:last-child {
+                            animation-delay: 0.4s;
+                            animation: progress3 1.4s ease infinite;
+                            -webkit-animation: progress3 1.4s ease infinite;
                         }
                     }
                 }

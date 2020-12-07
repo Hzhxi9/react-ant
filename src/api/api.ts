@@ -5,7 +5,7 @@ import * as ResTypes from '../types/response';
 /**
  * 获取验证码
  */
-export function getCaptchaCode() {
+export function getCaptchaCode(): Promise<{ code: string; status: number }> {
     return request({
         method: 'POST',
         url: '/v1/captchas',
@@ -15,7 +15,7 @@ export function getCaptchaCode() {
 /**
  * 账号密码登录
  */
-export function login(data: any) {
+export function login(data: ReqTypes.loginParams): Promise<ResTypes.loginData> {
     return request({
         method: 'POST',
         url: '/v2/login',
@@ -102,7 +102,7 @@ export function cityGuess(params: { type: string }): Promise<ResTypes.CityGuessD
  * 获取商店列表
  */
 export function getShopList(params: { latitude: string; longitude: string }): Promise<ResTypes.ShopData[]> {
-    console.log(params,'params')
+    console.log(params, 'params');
     return request({
         method: 'GET',
         url: `/shopping/restaurants/?latitude=${params.latitude}&longitude=${params.longitude}`,

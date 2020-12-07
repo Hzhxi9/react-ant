@@ -30,17 +30,17 @@ class ShopList extends React.Component<{ list: ResTypes.ShopData[] }, any> {
                                     <img src={imgUrl + element.image_path} alt='shop' />
                                 </div>
                                 <div>
-                                    <p>
-                                        <div>
+                                    <div>
+                                        <p>
                                             <span>品牌</span>
                                             {element.name}
-                                        </div>
+                                        </p>
                                         <div>
                                             {element.supports.map((item, index) => {
                                                 return <span key={index}>{item.icon_name}</span>;
                                             })}
                                         </div>
-                                    </p>
+                                    </div>
                                     <div>
                                         <div>
                                             <Rate value={element.rating} />

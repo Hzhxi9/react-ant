@@ -1,0 +1,67 @@
+/**
+*   loading动画
+*/
+@keyframes loading {
+    0% {
+        transform: rotate(0deg);
+        border-left-color: red;
+    }
+    33% {
+        transform: rotate(360deg);
+        border-left-color: blue;
+    }
+    67% {
+        transform: rotate(720deg);
+        border-left-color: yellow;
+    }
+    100% {
+        transform: rotate(1080deg);
+        border-left-color: green;
+    }
+}
+
+/**
+*   骨架屏动画
+*/
+@keyframes progress1 {
+    from {
+        width: 0;
+        background-position: 100% 50%;
+    }
+    to {
+        width: 10rem;
+        background-position: 0 50%;
+    }
+}
+@keyframes progress2 {
+    from {
+        width: 0;
+        background-position: 100% 50%;
+    }
+    to {
+        width: 6rem;
+        background-position: 0 50%;
+    }
+}
+@keyframes progress3 {
+    from {
+        width: 0;
+        background-position: 100% 50%;
+    }
+    to {
+        width: 8rem;
+        background-position: 0 50%;
+    }
+}
+/**
+*   骨架屏动画
+*/
+@keyframes skeleton-loading {
+    0% {
+        background-position: 100% 50%;
+    }
+
+    to {
+        background-position: 0 50%;
+    }
+}
