@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { withRouter } from 'react-router-dom';
 import { TabBar } from 'antd-mobile';
 
 import HomeIcon from '../assets/images/elment.png';
@@ -12,13 +13,14 @@ import MineIcon from '../assets/images/ziyuan.png';
 import MineActiveIcon from '../assets/images/icon-ziyuan-copy.png';
 
 import '../assets/styles/index.scss';
+import { fromJS } from 'immutable';
 
 class Navigation extends React.Component<
     any,
     {
         selectedTab: number;
         fullScreen: boolean;
-        TabBarList: { icon: any; activeIcon: any; title: string }[];
+        TabBarList: { icon: any; activeIcon: any; title: string; path: string }[];
     }
 > {
     constructor(props: any) {
@@ -31,21 +33,25 @@ class Navigation extends React.Component<
                     icon: <img src={HomeIcon} alt='饿了么' />,
                     activeIcon: <img src={HomeActiveIcon} alt='饿了么' />,
                     title: '饿了么',
+                    path: '/home',
                 },
                 {
                     icon: <img src={FindIcon} alt='搜索' />,
                     activeIcon: <img src={FindActiveIcon} alt='搜索' />,
                     title: '搜索',
+                    path: '/',
                 },
                 {
                     icon: <img src={OrderIcon} alt='订单' />,
                     activeIcon: <img src={OrderActiveIcon} alt='订单' />,
                     title: '订单',
+                    path: '/',
                 },
                 {
                     icon: <img src={MineIcon} alt='我的' />,
                     activeIcon: <img src={MineActiveIcon} alt='我的' />,
                     title: '我的',
+                    path: '/mine',
                 },
             ],
         };
@@ -53,21 +59,18 @@ class Navigation extends React.Component<
 
     render() {
         const { TabBarList } = this.state;
-
         return (
             <div className='tabbar'>
                 <TabBar unselectedTintColor='#949494' tintColor='#33A3F4' barTintColor='white'>
-                    {TabBarList.map((item, index) => (
+                    {TabBarList.map((item) => (
                         <TabBar.Item
                             title={item.title}
                             key={item.title}
                             icon={item.icon}
                             selectedIcon={item.activeIcon}
-                            selected={this.state.selectedTab === index}
+                            selected={this.props.location.pathname === item.path}
                             onPress={() => {
-                                this.setState({
-                                    selectedTab: index,
-                                });
+                                this.props.history.push(item.path);
                             }}
                             data-seed='logId'
                         />
@@ -78,4 +81,4 @@ class Navigation extends React.Component<
     }
 }
 
-export default Navigation;
+export default withRouter(Navigation);
