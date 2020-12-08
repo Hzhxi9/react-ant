@@ -26,7 +26,7 @@ export function login(data: ReqTypes.loginParams): Promise<ResTypes.loginData> {
 /**
  * 获取用户消息 返回status为1表示成功
  */
-export function getUserInfo(params: any) {
+export function getUserInfo(params: any): Promise<ResTypes.loginData> {
     return request({
         method: 'GET',
         url: '/v1/user',

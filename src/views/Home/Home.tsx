@@ -12,6 +12,8 @@ import { saveAttrInfo } from '../../actions/user';
 import { is, fromJS } from 'immutable';
 import { getFoodTypes, getPoisSite, cityGuess, getShopList } from '../../api/api';
 
+import { History } from 'history';
+
 import * as ResType from '../../types/response';
 
 import './Home.scss';
@@ -23,11 +25,17 @@ type HomeState = {
     title: string;
     imgBaseUrl: string;
 };
-class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; value: string[] }> }, HomeState> {
+class Home extends React.Component<
+    { saveAttrInfo: Dispatch<{ dataType: string; value: string[] }>; history: History },
+    HomeState
+> {
     constructor(
         props:
-            | { saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }> }
-            | Readonly<{ saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }> }>
+            | { saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }>; history: History }
+            | Readonly<{
+                  saveAttrInfo: React.Dispatch<{ dataType: string; value: string[] }>;
+                  history: History;
+              }>
     ) {
         super(props);
         this.state = {
@@ -136,7 +144,7 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
 
         return (
             <div>
-                <Header title={title} />
+                <Header title={title} rightIcon history={this.props.history} />
 
                 <div className='content'>
                     {foodsType.length ? (
@@ -161,6 +169,12 @@ class Home extends React.Component<{ saveAttrInfo: Dispatch<{ dataType: string; 
                     )}
 
                     <div className='shop'>{shopList.length ? <ShopList list={shopList} /> : <ShopListSkeleton />}</div>
+
+                    {!foodsType.length ? (
+                        <div className='loader-box'>
+                            <Loader />
+                        </div>
+                    ) : null}
                 </div>
 
                 <Navigation />

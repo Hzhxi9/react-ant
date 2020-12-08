@@ -1,0 +1,17 @@
+.content {
+    .am-input-extra {
+        max-height: 32px !important;
+    }
+    .code {
+        display: flex;
+        align-items: center;
+        img {
+            width: 21.867vw;
+            height: 9.333vw;
+            margin-right: 1.333vw;
+        }
+        p {
+            font-size: 3.467vw;
+        }
+    }
+}

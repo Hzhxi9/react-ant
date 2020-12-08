@@ -8,12 +8,16 @@ import PhoneIcon from '../../assets/images/phone.png';
 import OrderIcon from '../../assets/images/icon-icon-copy.png';
 import ShopIcon from '../../assets/images/shop-icon.png';
 import VipIcon from '../../assets/images/VIP.png';
-import ServerrIcon from '../../assets/images/fuwu.png';
+import ServerIcon from '../../assets/images/fuwu.png';
 import ElementIcon from '../../assets/images/icon-elment-copy.png';
 
 import { connect } from 'react-redux';
+import { History } from 'history';
 import { getUserInfo } from '../../api/api';
+import { getStore } from '../../utils/index';
+import { saveUserInfo } from '../../actions/user';
 import { Icon, List } from 'antd-mobile';
+import { getImgPath } from '../../utils';
 import { is, fromJS } from 'immutable';
 
 import './Mine.scss';
@@ -29,7 +33,10 @@ type stateType = {
     }[];
 };
 
-class Mine extends React.Component<any, stateType> {
+class Mine extends React.Component<
+    { user: ResTyps.loginData; saveUserInfo: any; proData: any; history: History },
+    stateType
+> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -47,7 +54,7 @@ class Mine extends React.Component<any, stateType> {
                     name: '饿了么会员卡',
                 },
                 {
-                    icon: ServerrIcon,
+                    icon: ServerIcon,
                     name: '服务中心',
                 },
                 {
@@ -58,25 +65,58 @@ class Mine extends React.Component<any, stateType> {
         };
     }
 
+    getUserInfo = async () => {
+        try {
+            if (!getStore('user_id')) return;
+            const user = await getUserInfo({ user_id: getStore('user_id') });
+            user.imgpath = user.avatar.indexOf('/') !== -1 ? '/img/' + user.avatar : getImgPath();
+            this.props.saveUserInfo(user);
+        } catch (error) {
+            console.log('user', error);
+        }
+    };
+
+    componentDidMount() {
+        this.getUserInfo();
+    }
+
+    // componentWillReceiveProps(nextProps: any) {
+    //     if (!is(fromJS(this.props.proData), fromJS(nextProps.proData))) {
+    //         this.props.saveUserInfo(null);
+    //     }
+    // }
+
+    // 判断是否要更新render, return true 更新  return false不更新
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return !is(fromJS(this.props), fromJS(nextProps)) || !is(fromJS(this.state), fromJS(nextState));
+    }
+
     render() {
         const { navList } = this.state;
+        const { user } = this.props;
 
         return (
             <div>
                 <Header title={'我的'} />
                 <div className='content'>
-                    <QueueAnim>
+                    <QueueAnim type='top'>
                         {/* 用户信息 */}
-                        <div className='user-info' key='1'>
+                        <div
+                            className='user-info'
+                            key='1'
+                            onClick={() => {
+                                user ? this.props.history.push('/center') : this.props.history.push('/login');
+                            }}
+                        >
                             <div className='user-icon'>
-                                <img src={UserIcon} alt='头像' />
+                                <img src={user ? user.imgpath : UserIcon} alt='头像' />
                             </div>
                             <div>
                                 <div>
-                                    <h3>登录/注册</h3>
+                                    <h3>{user ? user.username : '登录/注册'}</h3>
                                     <p>
                                         <img src={PhoneIcon} alt='phone' />
-                                        暂无绑定手机
+                                        {user && user.mobile ? user.mobile : '暂无绑定手机'}
                                     </p>
                                 </div>
                                 <Icon type='right' />
@@ -86,27 +126,29 @@ class Mine extends React.Component<any, stateType> {
                         {/* 积分信息 */}
                         <ul className='integration' key='2'>
                             <li>
-                                <h3>
-                                    0.00<span>元</span>
+                                <h3 style={{ color: '#f90' }}>
+                                    {user ? user.balance.toFixed(2) : '0.00'}
+                                    <span>元</span>
                                 </h3>
                                 <p>我的余额</p>
                             </li>
                             <li>
-                                <h3>
-                                    0.00<span>元</span>
+                                <h3 style={{ color: '#ff5f3e' }}>
+                                    {user ? user.gift_amount : 0}
+                                    <span>个</span>
                                 </h3>
-                                <p>我的余额</p>
+                                <p>我的优惠</p>
                             </li>
                             <li>
-                                <h3>
-                                    0.00<span>元</span>
+                                <h3 style={{ color: '#6ac20b' }}>
+                                    {user ? user.point : 0}
+                                    <span>分</span>
                                 </h3>
-                                <p>我的余额</p>
+                                <p>我的积分</p>
                             </li>
                         </ul>
 
                         {/* 导航列表 */}
-
                         <List key='3'>
                             <QueueAnim>
                                 {navList.map((item, i) => {
@@ -126,4 +168,18 @@ class Mine extends React.Component<any, stateType> {
     }
 }
 
-export default Mine;
+const mapStateToProps = (state: any) => {
+    return {
+        user: state.user.userInfo,
+    };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        saveUserInfo: (user: any) => {
+            dispatch(saveUserInfo(user));
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Mine);

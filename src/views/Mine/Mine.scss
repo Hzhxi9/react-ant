@@ -8,6 +8,7 @@
         .user-icon {
             img {
                 width: 15.625vw;
+                border-radius: 50%;
             }
         }
         > div {
@@ -55,8 +56,10 @@
             h3 {
                 padding-bottom: 2.667vw;
                 font-size: 7.467vw;
+                font-weight: bold;
                 span {
                     font-size: 3.733vw;
+                    color: #333;
                 }
             }
         }

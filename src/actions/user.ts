@@ -4,6 +4,7 @@ import * as UserType from '../store/action-type';
  * 保存用户信息
  */
 export const saveUserInfo = (info: any) => {
+    console.log(info);
     return {
         type: UserType.SAVE_USERINFO,
         info,

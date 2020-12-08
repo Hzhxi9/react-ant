@@ -13,7 +13,6 @@ import MineIcon from '../assets/images/ziyuan.png';
 import MineActiveIcon from '../assets/images/icon-ziyuan-copy.png';
 
 import '../assets/styles/index.scss';
-import { fromJS } from 'immutable';
 
 class Navigation extends React.Component<
     any,

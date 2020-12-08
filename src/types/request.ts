@@ -5,7 +5,7 @@ export interface FoodTypeParams {
 }
 
 export interface loginParams {
-    captcha_code: string;
+    captcha_code: number;
     password: string;
     username: string;
 }

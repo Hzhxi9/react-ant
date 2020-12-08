@@ -101,7 +101,10 @@ export interface loginData {
     mobile: string;
     point: number;
     registe_time: string;
-    user_id: number;
+    user_id: string;
     username: string;
     _id: string;
+    status: number;
+    message: string;
+    imgpath: string;
 }
