@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import ElementIcon from '../../assets/images/icon-elment-copy.png';
 import CartIcon from '../../assets/images/cart.png';
 
 import { connect } from 'react-redux';
@@ -16,6 +15,7 @@ class Shop extends React.Component<any, any> {
         super(props);
         this.state = {
             menu: [],
+            foods: [],
             detail: {},
             selectd: 0,
         };
@@ -34,23 +34,14 @@ class Shop extends React.Component<any, any> {
             const res = await shopDetails(data);
             let menu = await getfoodMenu({ restaurant_id: data.id });
             menu = this.setNumOfMenu(menu);
-            const list = this.setFoodList(menu);
-            console.log(res.activities.length);
             this.setState({
                 detail: res,
                 menu,
+                foods: menu[0],
             });
         } catch (error) {
             console.log(error);
         }
-    };
-
-    setFoodList = (detail: any) => {
-        let list: any[] = [];
-        detail.forEach((item: any) => {
-            list.push(...item.foods);
-        });
-        return list;
     };
 
     setNumOfMenu = (menu: any) => {
@@ -65,13 +56,25 @@ class Shop extends React.Component<any, any> {
         return menu;
     };
 
+    getBadge = (value: { icon_name: string; icon_color: string }[]): boolean => {
+        return !!value.find((item) => item.icon_name === '新');
+    };
+
+    onSelected = (index: number) => {
+        console.log(index);
+        this.setState({
+            selectd: index,
+            foods: this.state.menu[index],
+        });
+    };
+
     componentDidMount() {
         this.init();
     }
 
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selectd } = this.state;
+        const { detail, menu, selectd, foods } = this.state;
         return (
             <div>
                 {/* 商家信息 */}
@@ -142,7 +145,7 @@ class Shop extends React.Component<any, any> {
                                                   className={classnames({ active: selectd === index })}
                                                   key={item.id}
                                                   onClick={() => {
-                                                      this.setState({ selectd: index });
+                                                      this.onSelected(index);
                                                   }}
                                               >
                                                   {item.name}
@@ -152,48 +155,56 @@ class Shop extends React.Component<any, any> {
                                     : null}
                             </ul>
                             <div className='good-list'>
-                                <h3>好吃</h3>
+                                <h3>
+                                    {foods.name}
+                                    <span>{foods.description}</span>
+                                </h3>
+
                                 <ul>
-                                    <li>
-                                        <Badge text={'新'} corner>
-                                            <img src={ElementIcon} alt='菜品' />
-                                            <div>
-                                                <h5>
-                                                    111{' '}
-                                                    <Badge
-                                                        text='招牌'
-                                                        hot
-                                                        style={{
-                                                            padding: '0 3px',
-                                                            backgroundColor: '#fff',
-                                                            borderRadius: '1.867vw',
-                                                            color: '#f19736',
-                                                            border: '1px solid #f19736',
-                                                            fontSize: '2.133vw',
-                                                        }}
-                                                    />
-                                                </h5>
-                                                <p>111</p>
-                                                <p>111</p>
-                                                <Badge
-                                                    text='招牌'
-                                                    hot
-                                                    style={{
-                                                        padding: '0 3px',
-                                                        backgroundColor: '#fff',
-                                                        borderRadius: '1.867vw',
-                                                        color: '#f19736',
-                                                        border: '1px solid #f19736',
-                                                        fontSize: '2.133vw',
-                                                    }}
-                                                />
-                                                <div>
-                                                    <span className='good-price'>￥20</span>
-                                                    <Stepper showNumber max={10} min={1} />
-                                                </div>
-                                            </div>
-                                        </Badge>
-                                    </li>
+                                    {Array.isArray(foods.foods) && foods.foods.length
+                                        ? foods.foods.map((item: any) => {
+                                              return (
+                                                  <li key={item._id}>
+                                                      <Badge text={this.getBadge(item.attributes) ? '新' : ''} corner>
+                                                          <img src={imgUrl + item.image_path} alt='菜品' />
+                                                          <div>
+                                                              <h5>
+                                                                  {item.name}
+                                                                  {this.getBadge(item.attributes)
+                                                                      ? null
+                                                                      : Array.isArray(item.attributes) &&
+                                                                        item.attributes.length
+                                                                      ? item.attributes.map((i: any, index: number) => {
+                                                                            return (
+                                                                                <span key={index}>{i.icon_name}</span>
+                                                                            );
+                                                                        })
+                                                                      : null}
+                                                              </h5>
+                                                              <p>{item.description}</p>
+                                                              <p>{item.tips}</p>
+                                                              <span>{item.activity && item.activity.image_text}</span>
+                                                              <div>
+                                                                  <span className='good-price'>
+                                                                      ￥{item.specfoods[0].price}
+                                                                      {Array.isArray(item.specifications) &&
+                                                                      item.specifications.length
+                                                                          ? '起'
+                                                                          : ''}
+                                                                  </span>
+                                                                  <Stepper
+                                                                      showNumber
+                                                                      value={item.qty}
+                                                                      max={10}
+                                                                      min={1}
+                                                                  />
+                                                              </div>
+                                                          </div>
+                                                      </Badge>
+                                                  </li>
+                                              );
+                                          })
+                                        : null}
                                 </ul>
                             </div>
                         </div>

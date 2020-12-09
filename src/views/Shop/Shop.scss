@@ -83,11 +83,17 @@ main {
         }
         .good-list {
             flex: 1;
+            height: calc(100vh - 29.867vw - 43.5px - 13.333vw);
+            overflow: auto;
             h3 {
                 font-size: 4.533vw;
                 font-weight: bold;
                 color: #666;
                 padding: 2.6vw;
+                span {
+                    font-size: 3.2vw;
+                    color: #999;
+                }
             }
             ul {
                 li {
