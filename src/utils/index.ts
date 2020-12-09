@@ -32,6 +32,16 @@ export const clearStore = () => {
 };
 
 /**
+ * 获取url参数
+ */
+export function getUrlParams(name: string, str: string): string | null {
+    const reg = new RegExp(`(^|&)${name}=([^&]*)(&|$)`);
+    const r = str.substr(1).match(reg);
+    if (r != null) return decodeURIComponent(r[2]);
+    return null;
+}
+
+/**
  * 处理图片路径
  */
 export const getImgPath = (path?: string): string => {

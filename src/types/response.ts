@@ -84,7 +84,7 @@ export interface SupportsData {
     _id: string;
 }
 
-export interface loginData {
+export interface LoginData {
     avatar: string;
     balance: number;
     brand_member_new: number;
@@ -107,4 +107,16 @@ export interface loginData {
     status: number;
     message: string;
     imgpath: string;
+}
+
+export interface MenuData {
+    description: string;
+    icon_url: string;
+    id: number;
+    is_selected: boolean;
+    name: string;
+    restaurant_id: number;
+    type: number;
+    __v: number;
+    foods: ShopData[];
 }

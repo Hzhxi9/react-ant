@@ -14,6 +14,7 @@ export default class RouteConfig extends React.Component {
                     <Route path='/mine' exact component={AsyncComponent(() => import('../views/Mine/Mine'))} />
                     <Route path='/login' exact component={AsyncComponent(() => import('../views/Login/Login'))} />
                     <Route path='/center' exact component={AsyncComponent(() => import('../views/Center/Center'))} />
+                    <Route path='/shop' component={AsyncComponent(() => import('../views/Shop/Shop'))} />
                 </Switch>
             </Router>
         );

@@ -7,15 +7,16 @@ type UsersType = {
     temMessage: string; //临时姓名
     hasAddressList: string[]; // 已有的地址
     operate: string;
-    userInfo: ResType.loginData | null;
+    userInfo: ResType.LoginData | null;
     geohash: string[];
 };
 
 type actionType = {
     type: string;
-    info: ResType.loginData | null;
+    info: ResType.LoginData | null;
     dataType: string;
     value: string;
+    key: string;
 };
 
 const userInfo: UsersType = {
@@ -41,6 +42,8 @@ const user = (state: UsersType = userInfo, action: actionType) => {
                 ...state,
                 ...{ [action.dataType]: action.value },
             };
+        case UserType.MODIFY_USERINFO:
+            return { ...state, userInfo: { ...state.userInfo, [action.key]: action.value } };
 
         default:
             return state;

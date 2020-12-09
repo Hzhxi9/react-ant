@@ -26,7 +26,7 @@ export const saveAttrInfo = (data: { dataType: string; value: any }) => {
 /**
  * 修改用户信息
  */
-export const modifyUserInfo = (data: { key: string; value: any }) => {
+export const modifyUserInfo = (data: { key: string; value: string }) => {
     const { key, value } = data;
     return {
         type: UserType.MODIFY_USERINFO,

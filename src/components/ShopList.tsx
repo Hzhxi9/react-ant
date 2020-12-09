@@ -1,14 +1,20 @@
 import React from 'react';
 import shopImg from '../assets/images/shop.png';
 import Rate from 'rc-rate';
+
 import 'rc-rate/assets/index.css';
 
 import * as ResTypes from '../types/response';
 
 import { imgUrl } from '../configs/envconfig';
+import { History } from 'history';
 
-class ShopList extends React.Component<{ list: ResTypes.ShopData[] }, any> {
-    constructor(props: { list: ResTypes.ShopData[] } | Readonly<{ list: ResTypes.ShopData[] }>) {
+class ShopList extends React.Component<{ list: ResTypes.ShopData[]; history: History }, any> {
+    constructor(
+        props:
+            | { list: ResTypes.ShopData[]; history: History }
+            | Readonly<{ list: ResTypes.ShopData[]; history: History }>
+    ) {
         super(props);
         this.state = {};
     }
@@ -25,7 +31,13 @@ class ShopList extends React.Component<{ list: ResTypes.ShopData[] }, any> {
                 <ul className='shop-list'>
                     {list.map((element, index) => {
                         return (
-                            <li className='shop-item' key={index}>
+                            <li
+                                className='shop-item'
+                                key={index}
+                                onClick={() => {
+                                    this.props.history.push(`/shop?id=${element.id}`);
+                                }}
+                            >
                                 <div>
                                     <img src={imgUrl + element.image_path} alt='shop' />
                                 </div>

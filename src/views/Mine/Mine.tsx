@@ -34,7 +34,7 @@ type stateType = {
 };
 
 class Mine extends React.Component<
-    { user: ResTyps.loginData; saveUserInfo: any; proData: any; history: History },
+    { user: ResTyps.LoginData; saveUserInfo: any; proData: any; history: History },
     stateType
 > {
     constructor(props: any) {

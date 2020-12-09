@@ -168,7 +168,13 @@ class Home extends React.Component<
                         <FoodTypeSkeleton />
                     )}
 
-                    <div className='shop'>{shopList.length ? <ShopList list={shopList} /> : <ShopListSkeleton />}</div>
+                    <div className='shop'>
+                        {shopList.length ? (
+                            <ShopList list={shopList} history={this.props.history} />
+                        ) : (
+                            <ShopListSkeleton />
+                        )}
+                    </div>
 
                     {!foodsType.length ? (
                         <div className='loader-box'>

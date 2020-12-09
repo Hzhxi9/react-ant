@@ -15,7 +15,7 @@ export function getCaptchaCode(): Promise<{ code: string; status: number }> {
 /**
  * 账号密码登录
  */
-export function login(data: ReqTypes.loginParams): Promise<ResTypes.loginData> {
+export function login(data: ReqTypes.loginParams): Promise<ResTypes.LoginData> {
     return request({
         method: 'POST',
         url: '/v2/login',
@@ -26,7 +26,7 @@ export function login(data: ReqTypes.loginParams): Promise<ResTypes.loginData> {
 /**
  * 获取用户消息 返回status为1表示成功
  */
-export function getUserInfo(params: any): Promise<ResTypes.loginData> {
+export function getUserInfo(params: any): Promise<ResTypes.LoginData> {
     return request({
         method: 'GET',
         url: '/v1/user',
@@ -37,7 +37,7 @@ export function getUserInfo(params: any): Promise<ResTypes.loginData> {
 /**
  * 上传图片
  */
-export function uploadImg(data: any) {
+export function uploadImg(data: FormData): Promise<{ image_path: string; status: number }> {
     return request({
         method: 'POST',
         url: '//elm.cangdu.org/v1/addimg/shop',
@@ -112,18 +112,17 @@ export function getShopList(params: { latitude: string; longitude: string }): Pr
 /**
  * 获取商店详情
  */
-export function shopDetails(params: any) {
+export function shopDetails(params: { id: string; longitude: string; latitude: string }): Promise<ResTypes.ShopData> {
     return request({
         method: 'GET',
-        url: '/shopping/restaurant/',
-        params,
+        url: `/shopping/restaurant/${params.id}?latitude=${params.latitude}&longitude=${params.longitude}`,
     });
 }
 
 /**
  * 获取食物清单
  */
-export function getfoodMenu(params: any) {
+export function getfoodMenu(params: { restaurant_id: string }): Promise<ResTypes.MenuData[]> {
     return request({
         method: 'GET',
         url: '/shopping/v2/menu/',

@@ -1,6 +1,7 @@
 import React from 'react';
 import Header from '../../components/Header';
 import Animate from 'rc-animate';
+import QueueAnim from 'rc-queue-anim';
 
 import { List, InputItem, WhiteSpace, WingBlank, Button, Switch, Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
@@ -89,55 +90,57 @@ class Login extends React.Component<any, StateType> {
                     <div className='content'>
                         <WhiteSpace />
                         <WingBlank>
-                            <List>
-                                <InputItem
-                                    {...getFieldProps('autofocus')}
-                                    clear
-                                    placeholder='账号'
-                                    value={username}
-                                    onChange={(value: string) => this.setState({ username: value })}
-                                ></InputItem>
-                                <InputItem
-                                    {...getFieldProps('focus')}
-                                    clear
-                                    placeholder='密码'
-                                    type={isPassword ? 'password' : 'text'}
-                                    value={password}
-                                    onChange={(value: string) => this.setState({ password: value })}
-                                    extra={
-                                        <Switch
-                                            {...getFieldProps('Switch8', {
-                                                initialValue: true,
-                                                valuePropName: 'checked',
-                                            })}
-                                            onClick={(checked: boolean) => {
-                                                this.setState({ isPassword: checked });
-                                            }}
-                                        />
-                                    }
-                                ></InputItem>
-                                <InputItem
-                                    {...getFieldProps('focus')}
-                                    clear
-                                    placeholder='验证码'
-                                    value={captcha_code}
-                                    type='number'
-                                    maxLength='6'
-                                    onChange={(value: number) => this.setState({ captcha_code: value })}
-                                    extra={
-                                        <div className='code'>
-                                            <img src={code} alt='验证码' />
-                                            <div onClick={this.getCode}>
-                                                <p>看不清</p>
-                                                <p>换一张</p>
+                            <QueueAnim>
+                                <List key='1'>
+                                    <InputItem
+                                        {...getFieldProps('autofocus')}
+                                        clear
+                                        placeholder='账号'
+                                        value={username}
+                                        onChange={(value: string) => this.setState({ username: value })}
+                                    ></InputItem>
+                                    <InputItem
+                                        {...getFieldProps('focus')}
+                                        clear
+                                        placeholder='密码'
+                                        type={isPassword ? 'password' : 'text'}
+                                        value={password}
+                                        onChange={(value: string) => this.setState({ password: value })}
+                                        extra={
+                                            <Switch
+                                                {...getFieldProps('Switch8', {
+                                                    initialValue: true,
+                                                    valuePropName: 'checked',
+                                                })}
+                                                onClick={(checked: boolean) => {
+                                                    this.setState({ isPassword: checked });
+                                                }}
+                                            />
+                                        }
+                                    ></InputItem>
+                                    <InputItem
+                                        {...getFieldProps('focus')}
+                                        clear
+                                        placeholder='验证码'
+                                        value={captcha_code}
+                                        type='number'
+                                        maxLength='6'
+                                        onChange={(value: number) => this.setState({ captcha_code: value })}
+                                        extra={
+                                            <div className='code'>
+                                                <img src={code} alt='验证码' />
+                                                <div onClick={this.getCode}>
+                                                    <p>看不清</p>
+                                                    <p>换一张</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    }
-                                ></InputItem>
-                            </List>
-                            <Button type='primary' style={{ marginTop: '10px' }} onClick={this.login}>
-                                登录
-                            </Button>
+                                        }
+                                    ></InputItem>
+                                </List>
+                                <Button key='2' type='primary' style={{ marginTop: '10px' }} onClick={this.login}>
+                                    登录
+                                </Button>
+                            </QueueAnim>
                         </WingBlank>
                     </div>
                 </Animate>

@@ -5,20 +5,19 @@ import Header from '../../components/Header';
 import UserIcon from '../../assets/images/face.png';
 import PhoneIcon from '../../assets/images/phone1.png';
 
-import { History } from 'history';
+import { is, fromJS } from 'immutable';
 import { getStore, getImgPath, clearStore } from '../../utils';
 import { getUserInfo, uploadImg } from '../../api/api';
-import { saveUserInfo } from '../../actions/user';
+import { saveUserInfo, modifyUserInfo } from '../../actions/user';
 import { connect } from 'react-redux';
+import { imgUrl } from '../../configs/envconfig';
 import { List, Button, WingBlank, WhiteSpace, Modal, Toast } from 'antd-mobile';
 
 import './Center.scss';
 
 class Center extends React.Component<any, any> {
-    fileRef: React.RefObject<HTMLInputElement>;
     constructor(props: any) {
         super(props);
-        this.fileRef = React.createRef();
         this.state = {
             files: '',
         };
@@ -35,9 +34,31 @@ class Center extends React.Component<any, any> {
         }
     };
 
-    upload = async () => {
-        // this.fileRef.current && this.fileRef.current.click();
-        // console.log();
+    upload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const input = e.target;
+        const files = e.target.files as FileList;
+        const maxSize = 1024 * 1024 * 3;
+        let fs = new FormData();
+
+        if (files && files[0]) {
+            const file = files[0];
+            if (file.size > maxSize) {
+                Toast.fail('图片大小不能超过3M');
+                input.value = '';
+                return;
+            } else {
+                try {
+                    fs.append('file', file);
+                    const res = await uploadImg(fs);
+                    if (res.status === 1) {
+                        Toast.success('修改头像成功');
+                        this.props.modifyUserInfo('imgpath', imgUrl + res.image_path);
+                    }
+                } catch (error) {
+                    console.log(error, 'error');
+                }
+            }
+        }
     };
 
     logout = async () => {
@@ -51,9 +72,13 @@ class Center extends React.Component<any, any> {
         this.getUserInfo();
     }
 
+    // 判断是否要更新render, return true 更新  return false不更新
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return !is(fromJS(this.props), fromJS(nextProps)) || !is(fromJS(this.state), fromJS(nextState));
+    }
+
     render() {
         const { user } = this.props;
-        const { files } = this.state;
 
         const Item = List.Item;
         const alert = Modal.alert;
@@ -80,12 +105,16 @@ class Center extends React.Component<any, any> {
                                             src={user && user.imgpath ? user.imgpath : UserIcon}
                                             alt='头像'
                                         />
-                                        <input type='file' style={{ display: 'none' }} ref={this.fileRef}></input>
+                                        <input
+                                            type='file'
+                                            className='file-input'
+                                            accept='image/*'
+                                            onChange={this.upload}
+                                        ></input>
                                     </div>
                                 }
                                 style={{ height: '19.467vw' }}
                                 arrow='horizontal'
-                                onClick={this.upload}
                             >
                                 头像
                             </Item>
@@ -135,6 +164,9 @@ const mapPatchToProps = (patch: any) => {
     return {
         saveUserInfo: (value: any) => {
             patch(saveUserInfo(value));
+        },
+        modifyUserInfo: (key: string, value: string) => {
+            patch(modifyUserInfo({ key, value }));
         },
     };
 };
