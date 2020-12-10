@@ -68,6 +68,14 @@ class Shop extends React.Component<any, any> {
         });
     };
 
+    changeNum = (e: Event, index: number) => {
+        const foods = this.state.foods;
+        foods.foods[index].num = e;
+        this.setState({
+            foods,
+        });
+    };
+
     componentDidMount() {
         this.init();
     }
@@ -156,13 +164,13 @@ class Shop extends React.Component<any, any> {
                             </ul>
                             <div className='good-list'>
                                 <h3>
-                                    {foods.name}
+                                    {foods.name ?? '默认'}
                                     <span>{foods.description}</span>
                                 </h3>
 
                                 <ul>
                                     {Array.isArray(foods.foods) && foods.foods.length
-                                        ? foods.foods.map((item: any) => {
+                                        ? foods.foods.map((item: any, index: number) => {
                                               return (
                                                   <li key={item._id}>
                                                       <Badge text={this.getBadge(item.attributes) ? '新' : ''} corner>
@@ -176,14 +184,30 @@ class Shop extends React.Component<any, any> {
                                                                         item.attributes.length
                                                                       ? item.attributes.map((i: any, index: number) => {
                                                                             return (
-                                                                                <span key={index}>{i.icon_name}</span>
+                                                                                <span
+                                                                                    style={{
+                                                                                        color: `#${i.icon_color}`,
+                                                                                    }}
+                                                                                    key={index}
+                                                                                >
+                                                                                    {i.icon_name}
+                                                                                </span>
                                                                             );
                                                                         })
                                                                       : null}
                                                               </h5>
                                                               <p>{item.description}</p>
                                                               <p>{item.tips}</p>
-                                                              <span>{item.activity && item.activity.image_text}</span>
+                                                              <span
+                                                                  style={{
+                                                                      color: `#${
+                                                                          item.activity &&
+                                                                          item.activity.image_text_color
+                                                                      }`,
+                                                                  }}
+                                                              >
+                                                                  {item.activity && item.activity.image_text}
+                                                              </span>
                                                               <div>
                                                                   <span className='good-price'>
                                                                       ￥{item.specfoods[0].price}
@@ -194,9 +218,11 @@ class Shop extends React.Component<any, any> {
                                                                   </span>
                                                                   <Stepper
                                                                       showNumber
-                                                                      value={item.qty}
-                                                                      max={10}
-                                                                      min={1}
+                                                                      defaultValue={item.qty}
+                                                                      min={0}
+                                                                      onChange={(e) => {
+                                                                          this.changeNum(e, index);
+                                                                      }}
                                                                   />
                                                               </div>
                                                           </div>
