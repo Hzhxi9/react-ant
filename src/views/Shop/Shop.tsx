@@ -1,6 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 import CartIcon from '../../assets/images/cart.png';
+import Loader from '../../components/Loader';
+
+import ShopHeaderSkeleton from '../../components/ShopHeaderSkeleton';
+import ShopDetailSkeleton from '../../components/ShopDetailSkeleton';
 
 import { connect } from 'react-redux';
 import { imgUrl } from '../../configs/envconfig';
@@ -14,10 +18,10 @@ class Shop extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            menu: [],
-            foods: [],
-            detail: {},
-            selectd: 0,
+            menu: [], // 菜单类型
+            foods: [], // 菜单信息
+            detail: {}, // 商家信息
+            selected: 0,
         };
     }
 
@@ -63,7 +67,7 @@ class Shop extends React.Component<any, any> {
     onSelected = (index: number) => {
         console.log(index);
         this.setState({
-            selectd: index,
+            selected: index,
             foods: this.state.menu[index],
         });
     };
@@ -82,56 +86,61 @@ class Shop extends React.Component<any, any> {
 
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selectd, foods } = this.state;
+        const { detail, menu, selected, foods } = this.state;
         return (
             <div>
                 {/* 商家信息 */}
-                <header>
-                    <img src={imgUrl + detail.image_path} alt='店铺Icon' />
-                    <div className='header-info'>
-                        <Icon
-                            type='left'
-                            size='lg'
-                            style={{ position: 'absolute', left: '0', top: '0', zIndex: 10 }}
-                            onClick={() => {
-                                this.props.history.goBack();
-                            }}
-                        />
+                {Object.keys(detail).length ? (
+                    <header>
                         <img src={imgUrl + detail.image_path} alt='店铺Icon' />
-                        <div>
-                            <h3>{detail.name}</h3>
-                            <p>
-                                商家配送/
-                                {detail.order_lead_time}分钟送达/配送费¥{detail.float_delivery_fee}
-                            </p>
-                            <p>{detail.promotion_info}</p>
+                        <div className='header-info'>
+                            <Icon
+                                type='left'
+                                size='lg'
+                                style={{ position: 'absolute', left: '0', top: '0', zIndex: 10 }}
+                                onClick={() => {
+                                    this.props.history.goBack();
+                                }}
+                            />
+                            <img src={imgUrl + detail.image_path} alt='店铺Icon' />
+                            <div>
+                                <h3>{detail.name}</h3>
+                                <p>
+                                    商家配送/
+                                    {detail.order_lead_time}分钟送达/配送费¥{detail.float_delivery_fee}
+                                </p>
+                                <p>{detail.promotion_info}</p>
+                            </div>
+                            <Icon
+                                type='right'
+                                size='md'
+                                style={{ position: 'absolute', right: '2vw', bottom: '10.667vw' }}
+                            />
                         </div>
-                        <Icon
-                            type='right'
-                            size='md'
-                            style={{ position: 'absolute', right: '2vw', bottom: '10.667vw' }}
-                        />
-                    </div>
 
-                    {Array.isArray(detail.activities) && detail.activities.length ? (
-                        <div>
-                            {detail.activities.map((item: any) => {
-                                return (
-                                    <div className='footer-info' key={item.id}>
-                                        <div>
-                                            <span style={{ color: item.icon_color }}>{item.icon_name}</span>
-                                            {item.description}(APP专享)
+                        {Array.isArray(detail.activities) && detail.activities.length ? (
+                            <div>
+                                {detail.activities.map((item: any) => {
+                                    return (
+                                        <div className='footer-info' key={item.id}>
+                                            <div>
+                                                <span style={{ color: item.icon_color }}>{item.icon_name}</span>
+                                                {item.description}(APP专享)
+                                            </div>
+                                            <div>
+                                                {detail.activities.length}个活动
+                                                <Icon type='right' size='xxs' />
+                                            </div>
                                         </div>
-                                        <div>
-                                            {detail.activities.length}个活动
-                                            <Icon type='right' size='xxs' />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ) : null}
-                </header>
+                                    );
+                                })}
+                            </div>
+                        ) : null}
+                    </header>
+                ) : (
+                    <ShopHeaderSkeleton history={this.props.history} />
+                )}
+
                 {/* 菜单 */}
                 <main>
                     <Tabs
@@ -144,99 +153,119 @@ class Shop extends React.Component<any, any> {
                             console.log('onTabClick', index, tab);
                         }}
                     >
-                        <div className='content'>
-                            <ul className='nav'>
-                                {Array.isArray(menu) && menu.length
-                                    ? menu.map((item, index) => {
-                                          return (
-                                              <li
-                                                  className={classnames({ active: selectd === index })}
-                                                  key={item.id}
-                                                  onClick={() => {
-                                                      this.onSelected(index);
-                                                  }}
-                                              >
-                                                  {item.name}
-                                              </li>
-                                          );
-                                      })
-                                    : null}
-                            </ul>
-                            <div className='good-list'>
-                                <h3>
-                                    {foods.name ?? '默认'}
-                                    <span>{foods.description}</span>
-                                </h3>
-
-                                <ul>
-                                    {Array.isArray(foods.foods) && foods.foods.length
-                                        ? foods.foods.map((item: any, index: number) => {
+                        {menu && menu.length ? (
+                            <div className='content'>
+                                {' '}
+                                <ul className='nav'>
+                                    {Array.isArray(menu) && menu.length
+                                        ? menu.map((item, index) => {
                                               return (
-                                                  <li key={item._id}>
-                                                      <Badge text={this.getBadge(item.attributes) ? '新' : ''} corner>
-                                                          <img src={imgUrl + item.image_path} alt='菜品' />
-                                                          <div>
-                                                              <h5>
-                                                                  {item.name}
-                                                                  {this.getBadge(item.attributes)
-                                                                      ? null
-                                                                      : Array.isArray(item.attributes) &&
-                                                                        item.attributes.length
-                                                                      ? item.attributes.map((i: any, index: number) => {
-                                                                            return (
-                                                                                <span
-                                                                                    style={{
-                                                                                        color: `#${i.icon_color}`,
-                                                                                    }}
-                                                                                    key={index}
-                                                                                >
-                                                                                    {i.icon_name}
-                                                                                </span>
-                                                                            );
-                                                                        })
-                                                                      : null}
-                                                              </h5>
-                                                              <p>{item.description}</p>
-                                                              <p>{item.tips}</p>
-                                                              <span
-                                                                  style={{
-                                                                      color: `#${
-                                                                          item.activity &&
-                                                                          item.activity.image_text_color
-                                                                      }`,
-                                                                  }}
-                                                              >
-                                                                  {item.activity && item.activity.image_text}
-                                                              </span>
-                                                              <div>
-                                                                  <span className='good-price'>
-                                                                      ￥{item.specfoods[0].price}
-                                                                      {Array.isArray(item.specifications) &&
-                                                                      item.specifications.length
-                                                                          ? '起'
-                                                                          : ''}
-                                                                  </span>
-                                                                  <Stepper
-                                                                      showNumber
-                                                                      defaultValue={item.qty}
-                                                                      min={0}
-                                                                      onChange={(e) => {
-                                                                          this.changeNum(e, index);
-                                                                      }}
-                                                                  />
-                                                              </div>
-                                                          </div>
-                                                      </Badge>
+                                                  <li
+                                                      className={classnames({ active: selected === index })}
+                                                      key={item.id}
+                                                      onClick={() => {
+                                                          this.onSelected(index);
+                                                      }}
+                                                  >
+                                                      {item.name}
                                                   </li>
                                               );
                                           })
                                         : null}
                                 </ul>
+                                <div className='good-list'>
+                                    <h3>
+                                        {foods.name ?? '默认'}
+                                        <span>{foods.description}</span>
+                                    </h3>
+
+                                    <ul>
+                                        {Array.isArray(foods.foods) && foods.foods.length
+                                            ? foods.foods.map((item: any, index: number) => {
+                                                  return (
+                                                      <li key={item._id}>
+                                                          <Badge
+                                                              text={this.getBadge(item.attributes) ? '新' : ''}
+                                                              corner
+                                                          >
+                                                              <img src={imgUrl + item.image_path} alt='菜品' />
+                                                              <div>
+                                                                  <h5>
+                                                                      {item.name}
+                                                                      {this.getBadge(item.attributes)
+                                                                          ? null
+                                                                          : Array.isArray(item.attributes) &&
+                                                                            item.attributes.length
+                                                                          ? item.attributes.map(
+                                                                                (i: any, index: number) => {
+                                                                                    return (
+                                                                                        <span
+                                                                                            style={{
+                                                                                                color: `#${i.icon_color}`,
+                                                                                            }}
+                                                                                            key={index}
+                                                                                        >
+                                                                                            {i.icon_name}
+                                                                                        </span>
+                                                                                    );
+                                                                                }
+                                                                            )
+                                                                          : null}
+                                                                  </h5>
+                                                                  <p>{item.description}</p>
+                                                                  <p>{item.tips}</p>
+                                                                  <span
+                                                                      style={{
+                                                                          color: `#${
+                                                                              item.activity &&
+                                                                              item.activity.image_text_color
+                                                                          }`,
+                                                                      }}
+                                                                  >
+                                                                      {item.activity && item.activity.image_text}
+                                                                  </span>
+                                                                  <div>
+                                                                      <span className='good-price'>
+                                                                          ￥{item.specfoods[0].price}
+                                                                          {Array.isArray(item.specifications) &&
+                                                                          item.specifications.length
+                                                                              ? '起'
+                                                                              : ''}
+                                                                      </span>
+                                                                      <Stepper
+                                                                          showNumber
+                                                                          defaultValue={item.qty}
+                                                                          min={0}
+                                                                          onChange={(e) => {
+                                                                              this.changeNum(e, index);
+                                                                          }}
+                                                                      />
+                                                                  </div>
+                                                              </div>
+                                                          </Badge>
+                                                      </li>
+                                                  );
+                                              })
+                                            : null}
+                                    </ul>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            <div className='content'>
+                                <ShopDetailSkeleton />
+                            </div>
+                        )}
+
                         <div className='content'>Content of second tab</div>
                     </Tabs>
                 </main>
+
+                {/* load页面 */}
+                {menu && !menu.length ? (
+                    <div className='detail-loader-box'>
+                        <Loader />
+                    </div>
+                ) : null}
 
                 {/* 下单 */}
                 <footer>
