@@ -23,7 +23,7 @@ export interface CityGuessData {
 }
 
 export interface ShopData {
-    activities: ActivitiesData[] | [];
+    activities: ActivitiesData[] ;
     address: string;
     category: string;
     delivery_mode: { color: string; id: number; is_solid: boolean; text: string };
@@ -51,6 +51,8 @@ export interface ShopData {
     recent_order_num: number;
     status: number;
     supports: SupportsData[];
+    num: number;
+    qty: number;
 }
 
 export interface ActivitiesData {

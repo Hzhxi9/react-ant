@@ -9,19 +9,39 @@ import ShopDetailSkeleton from '../../components/ShopDetailSkeleton';
 import { connect } from 'react-redux';
 import { imgUrl } from '../../configs/envconfig';
 import { getUrlParams } from '../../utils';
+import { fromJS, is } from 'immutable';
 import { shopDetails, getfoodMenu } from '../../api/api';
 import { Icon, Tabs, Stepper, Badge } from 'antd-mobile';
 
+import * as ResTypes from '../../types/response';
+
 import './Shop.scss';
 
-class Shop extends React.Component<any, any> {
+type StateType = {
+    menu: ResTypes.MenuData[];
+    foods: ResTypes.MenuData | null;
+    detail: ResTypes.ShopData | null;
+    initList: ResTypes.ShopData[];
+    foodList: ResTypes.ShopData[];
+    selected: number;
+    totalPrice: number;
+    miniPrice: number;
+    count: number;
+};
+
+class Shop extends React.Component<any, StateType> {
     constructor(props: any) {
         super(props);
         this.state = {
             menu: [], // 菜单类型
-            foods: [], // 菜单信息
-            detail: {}, // 商家信息
+            foods: null, // 菜单信息
+            detail: null, // 商家信息
+            initList: [], // 初始化列表
+            foodList: [],
             selected: 0,
+            totalPrice: 0, // 总价
+            miniPrice: 0,
+            count: 0,
         };
     }
 
@@ -38,17 +58,22 @@ class Shop extends React.Component<any, any> {
             const res = await shopDetails(data);
             let menu = await getfoodMenu({ restaurant_id: data.id });
             menu = this.setNumOfMenu(menu);
+            const foodList = this.setFoodList(menu);
             this.setState({
                 detail: res,
                 menu,
+                foodList,
                 foods: menu[0],
+                count: 0,
+                initList: fromJS(foodList).toJS(),
+                miniPrice: res.float_minimum_order_amount,
             });
         } catch (error) {
             console.log(error);
         }
     };
 
-    setNumOfMenu = (menu: any) => {
+    setNumOfMenu = (menu: ResTypes.MenuData[]) => {
         let count = 0;
         menu.forEach((i: { foods: { num: number; qty: number }[] }) => {
             i.foods.forEach((item: { num: number; qty: number }) => {
@@ -58,6 +83,14 @@ class Shop extends React.Component<any, any> {
             });
         });
         return menu;
+    };
+
+    setFoodList = (menu: ResTypes.MenuData[]) => {
+        let list: ResTypes.ShopData[] = [];
+        menu.forEach((item) => {
+            list.push(...item.foods);
+        });
+        return list;
     };
 
     getBadge = (value: { icon_name: string; icon_color: string }[]): boolean => {
@@ -72,9 +105,9 @@ class Shop extends React.Component<any, any> {
         });
     };
 
-    changeNum = (e: Event, index: number) => {
+    changeNum = (e: number, index: number) => {
         const foods = this.state.foods;
-        foods.foods[index].num = e;
+        foods && (foods.foods[index].num = e);
         this.setState({
             foods,
         });
@@ -86,11 +119,11 @@ class Shop extends React.Component<any, any> {
 
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selected, foods } = this.state;
+        const { detail, menu, selected, foods, miniPrice } = this.state;
         return (
             <div>
                 {/* 商家信息 */}
-                {Object.keys(detail).length ? (
+                {detail && Object.keys(detail).length ? (
                     <header>
                         <img src={imgUrl + detail.image_path} alt='店铺Icon' />
                         <div className='header-info'>
@@ -155,7 +188,6 @@ class Shop extends React.Component<any, any> {
                     >
                         {menu && menu.length ? (
                             <div className='content'>
-                                {' '}
                                 <ul className='nav'>
                                     {Array.isArray(menu) && menu.length
                                         ? menu.map((item, index) => {
@@ -175,12 +207,12 @@ class Shop extends React.Component<any, any> {
                                 </ul>
                                 <div className='good-list'>
                                     <h3>
-                                        {foods.name ?? '默认'}
-                                        <span>{foods.description}</span>
+                                        {foods && (foods.name ?? '默认')}
+                                        <span>{foods && foods.description}</span>
                                     </h3>
 
                                     <ul>
-                                        {Array.isArray(foods.foods) && foods.foods.length
+                                        {foods && Array.isArray(foods.foods) && foods.foods.length
                                             ? foods.foods.map((item: any, index: number) => {
                                                   return (
                                                       <li key={item._id}>
@@ -275,10 +307,10 @@ class Shop extends React.Component<any, any> {
                         </div>
                         <div className='pay-num'>
                             <h3>￥0</h3>
-                            <p>配送费5</p>
+                            <p>配送费¥{detail && detail.float_delivery_fee}</p>
                         </div>
                     </div>
-                    <div className='pay-btn'>还差20起送</div>
+                    <div className='pay-btn'>还差¥{miniPrice}起送</div>
                 </footer>
             </div>
         );
