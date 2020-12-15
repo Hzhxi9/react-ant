@@ -152,6 +152,7 @@ footer {
     color: #fff;
     font-size: 4.267vw;
     font-weight: bold;
+    z-index: 100;
     .pay-price {
         width: 70%;
         display: flex;
@@ -196,4 +197,29 @@ footer {
     top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.5);
+}
+.order-drawer {
+    .title-box {
+        display: flex;
+        padding: 1.875vw 3.75vw;
+        justify-content: space-between;
+        background-color: #eceff1;
+    }
+    ul {
+        background-color: #fff;
+        li{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3.75vw 3.125vw;
+        }
+    }
+}
+.block {
+    width: 100%;
+    height: 16vw;
+    background-color: #fff;
+}
+.am-drawer-overlay {
+    background-color: transparent !important;
 }

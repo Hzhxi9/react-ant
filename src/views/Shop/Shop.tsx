@@ -11,7 +11,7 @@ import { imgUrl } from '../../configs/envconfig';
 import { getUrlParams } from '../../utils';
 import { fromJS, is } from 'immutable';
 import { shopDetails, getfoodMenu } from '../../api/api';
-import { Icon, Tabs, Stepper, Badge } from 'antd-mobile';
+import { Icon, Tabs, Stepper, Badge, Drawer } from 'antd-mobile';
 
 import * as ResTypes from '../../types/response';
 
@@ -27,15 +27,17 @@ type StateType = {
     totalPrice: number;
     miniPrice: number;
     count: number;
+    open: boolean;
 };
 
 class Shop extends React.Component<any, StateType> {
     constructor(props: any) {
         super(props);
         this.state = {
-            menu: [], // 菜单类型
+            open: false, // 弹窗
             foods: null, // 菜单信息
             detail: null, // 商家信息
+            menu: [], // 菜单类型
             initList: [], // 初始化列表
             foodList: [],
             selected: 0,
@@ -85,7 +87,7 @@ class Shop extends React.Component<any, StateType> {
         return menu;
     };
 
-    setFoodList = (menu: ResTypes.MenuData[]) => {
+    setFoodList = (menu: ResTypes.MenuData[]): ResTypes.ShopData[] => {
         let list: ResTypes.ShopData[] = [];
         menu.forEach((item) => {
             list.push(...item.foods);
@@ -98,19 +100,20 @@ class Shop extends React.Component<any, StateType> {
     };
 
     onSelected = (index: number) => {
-        console.log(index);
         this.setState({
             selected: index,
             foods: this.state.menu[index],
         });
     };
 
-    changeNum = (e: number, index: number) => {
+    changeNum = (e: number, item: ResTypes.MenuData) => {
         const foods = this.state.foods;
-        foods && (foods.foods[index].num = e);
-        this.setState({
-            foods,
-        });
+        console.log(item, 'item');
+        // foods && (foods.foods[index].num = e);
+        // console.log('e',e)
+        // this.setState({
+        //     foods,
+        // });
     };
 
     componentDidMount() {
@@ -120,6 +123,26 @@ class Shop extends React.Component<any, StateType> {
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
         const { detail, menu, selected, foods, miniPrice } = this.state;
+
+        const sidebar = (
+            <div>
+                <div className='title-box'>
+                    <span>购物车</span>
+                    <span>清空</span>
+                </div>
+                <ul>
+                    <li>
+                        <div>1</div>
+                        <div>
+                            <span>¥24</span>
+                            <Stepper showNumber defaultValue={0} min={0} />
+                        </div>
+                    </li>
+                </ul>
+                <div className='block'></div>
+            </div>
+        );
+
         return (
             <div>
                 {/* 商家信息 */}
@@ -269,7 +292,7 @@ class Shop extends React.Component<any, StateType> {
                                                                           defaultValue={item.qty}
                                                                           min={0}
                                                                           onChange={(e) => {
-                                                                              this.changeNum(e, index);
+                                                                              this.changeNum(e, item);
                                                                           }}
                                                                       />
                                                                   </div>
@@ -299,10 +322,25 @@ class Shop extends React.Component<any, StateType> {
                     </div>
                 ) : null}
 
+                {/* 选中弹窗 */}
+                <Drawer
+                    className='order-drawer'
+                    enableDragHandle
+                    contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
+                    sidebar={sidebar}
+                    position='bottom'
+                    open={this.state.open}
+                />
+
                 {/* 下单 */}
                 <footer>
                     <div className='pay-price'>
-                        <div className='cart'>
+                        <div
+                            className='cart'
+                            onClick={() => {
+                                this.setState({ open: !this.state.open });
+                            }}
+                        >
                             <img src={CartIcon} alt='购物车' />
                         </div>
                         <div className='pay-num'>
