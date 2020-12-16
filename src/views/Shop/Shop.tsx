@@ -23,6 +23,7 @@ type StateType = {
     detail: ResTypes.ShopData | null;
     initList: ResTypes.ShopData[];
     foodList: ResTypes.ShopData[];
+    selectList: ResTypes.ShopData[];
     selected: number;
     totalPrice: number;
     miniPrice: number;
@@ -40,6 +41,7 @@ class Shop extends React.Component<any, StateType> {
             menu: [], // 菜单类型
             initList: [], // 初始化列表
             foodList: [],
+            selectList: [],
             selected: 0,
             totalPrice: 0, // 总价
             miniPrice: 0,
@@ -106,14 +108,25 @@ class Shop extends React.Component<any, StateType> {
         });
     };
 
-    changeNum = (e: number, item: ResTypes.MenuData) => {
-        const foods = this.state.foods;
-        console.log(item, 'item');
-        // foods && (foods.foods[index].num = e);
-        // console.log('e',e)
-        // this.setState({
-        //     foods,
-        // });
+    changeNum = (e: number, item: ResTypes.ShopData) => {
+        const foods = this.state.foodList;
+        const index = foods.findIndex((e) => e._id === item._id);
+        let list: ResTypes.ShopData = Object.create(null);
+        list = foods.find((e) => e.num > 0) ? foods.find((e) => e.num > 0) : Object.create(null);
+
+        const selectIndex = this.state.selectList.findIndex((item) => item._id === list._id);
+        if (selectIndex < 0) {
+            this.state.selectList.push(list);
+        } else {
+            this.state.selectList[selectIndex].num = e;
+        }
+
+        foods[index].num = e;
+        this.setState({
+            foodList: foods,
+            selectList: this.state.selectList,
+        });
+        console.log(this.state.selectList);
     };
 
     componentDidMount() {
@@ -122,7 +135,7 @@ class Shop extends React.Component<any, StateType> {
 
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selected, foods, miniPrice } = this.state;
+        const { detail, menu, selected, foods, miniPrice, selectList } = this.state;
 
         const sidebar = (
             <div>
@@ -288,8 +301,8 @@ class Shop extends React.Component<any, StateType> {
                                                                               : ''}
                                                                       </span>
                                                                       <Stepper
+                                                                          defaultValue={0}
                                                                           showNumber
-                                                                          defaultValue={item.qty}
                                                                           min={0}
                                                                           onChange={(e) => {
                                                                               this.changeNum(e, item);
@@ -323,14 +336,14 @@ class Shop extends React.Component<any, StateType> {
                 ) : null}
 
                 {/* 选中弹窗 */}
-                <Drawer
+                {/* <Drawer
                     className='order-drawer'
                     enableDragHandle
                     contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
                     sidebar={sidebar}
                     position='bottom'
                     open={this.state.open}
-                />
+                /> */}
 
                 {/* 下单 */}
                 <footer>
@@ -341,6 +354,12 @@ class Shop extends React.Component<any, StateType> {
                                 this.setState({ open: !this.state.open });
                             }}
                         >
+                            {selectList.length ? (
+                                <Badge
+                                    text={selectList.length}
+                                    style={{ position: 'absolute', top: '-11.2vw', left: '6.4vw' }}
+                                />
+                            ) : null}
                             <img src={CartIcon} alt='购物车' />
                         </div>
                         <div className='pay-num'>
