@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import CartIcon from '../../assets/images/cart.png';
 import Loader from '../../components/Loader';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import ShopHeaderSkeleton from '../../components/ShopHeaderSkeleton';
 import ShopDetailSkeleton from '../../components/ShopDetailSkeleton';
@@ -350,6 +351,7 @@ class Shop extends React.Component<any, StateType> {
                     <div className='pay-price'>
                         <div
                             className='cart'
+                            style={{ backgroundColor: selectList.length ? '#3190e8' : '#3d3d3f' }}
                             onClick={() => {
                                 this.setState({ open: !this.state.open });
                             }}
