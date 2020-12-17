@@ -54,8 +54,26 @@ export interface ShopData {
     num: number;
     qty: number;
     _id: string;
+    specfoods: SpecfoodsData[];
 }
 
+export interface SpecfoodsData {
+    checkout_mode: number;
+    food_id: number;
+    is_essential: boolean;
+    item_id: number;
+    name: string;
+    original_price: number;
+    packing_fee: number;
+    pinyin_name: string;
+    price: number;
+    promotion_stock: number;
+    recent_popularity: number;
+    recent_rating: number;
+    restaurant_id: number;
+    sku_id: number;
+    sold_out: boolean;
+}
 export interface ActivitiesData {
     description: string;
     icon_color: string;

@@ -111,22 +111,22 @@ class Shop extends React.Component<any, StateType> {
     changeNum = (e: number, item: ResTypes.ShopData) => {
         const foods = this.state.foodList;
         const index = foods.findIndex((e) => e._id === item._id);
-        let list: ResTypes.ShopData = Object.create(null);
-        list = foods.find((e) => e.num > 0) ? foods.find((e) => e.num > 0) : Object.create(null);
+        foods[index].qty = e;
 
-        const selectIndex = this.state.selectList.findIndex((item) => item._id === list._id);
-        if (selectIndex < 0) {
-            this.state.selectList.push(list);
-        } else {
-            this.state.selectList[selectIndex].num = e;
-        }
+        let list = [];
+        list = foods.filter((item) => item.qty > 0);
 
-        foods[index].num = e;
+        let total = 0;
+        list.forEach((item) => {
+            total = total + item.specfoods[0].price * item.qty;
+        });
+        console.log(total);
+
         this.setState({
             foodList: foods,
-            selectList: this.state.selectList,
+            selectList: list,
+            totalPrice: total,
         });
-        console.log(this.state.selectList);
     };
 
     componentDidMount() {
@@ -135,7 +135,7 @@ class Shop extends React.Component<any, StateType> {
 
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selected, foods, miniPrice, selectList } = this.state;
+        const { detail, menu, selected, foods, miniPrice, selectList, totalPrice } = this.state;
 
         const sidebar = (
             <div>
@@ -363,11 +363,15 @@ class Shop extends React.Component<any, StateType> {
                             <img src={CartIcon} alt='购物车' />
                         </div>
                         <div className='pay-num'>
-                            <h3>￥0</h3>
+                            <h3>￥{totalPrice}</h3>
                             <p>配送费¥{detail && detail.float_delivery_fee}</p>
                         </div>
                     </div>
-                    <div className='pay-btn'>还差¥{miniPrice}起送</div>
+                    {selectList.length ? (
+                        <div className='pay-btn gopay-btn'>去结算</div>
+                    ) : (
+                        <div className='pay-btn'>还差¥{miniPrice}起送</div>
+                    )}
                 </footer>
             </div>
         );
