@@ -1,3 +1,5 @@
+@import '../../assets/styles/animate.scss';
+
 header {
     padding: 2.5vw;
     position: relative;
@@ -64,6 +66,7 @@ main {
         height: calc(100vh - 29.867vw - 43.5px - 13.333vw);
         display: flex;
         overflow: auto;
+        text-align: left;
         .nav {
             width: 24vw;
             background-color: #fff;
@@ -104,6 +107,7 @@ main {
                     }
                     > span {
                         display: flex;
+                        width: 100%;
                         padding: 3.733vw 2.6vw;
                         > div {
                             flex: 1;
@@ -139,6 +143,7 @@ main {
         }
     }
 }
+
 footer {
     height: 13.333vw;
     width: 100%;
@@ -148,7 +153,6 @@ footer {
     bottom: 0;
     display: flex;
     align-items: center;
-    position: relative;
     color: #fff;
     font-size: 4.267vw;
     font-weight: bold;
@@ -167,6 +171,9 @@ footer {
             img {
                 width: 8.8vw;
             }
+        }
+        .cart-animate {
+            animation: active 0.5s ease-in-out;
         }
         .pay-num {
             position: absolute;
@@ -189,6 +196,7 @@ footer {
     }
     .gopay-btn {
         background-color: #4cd964;
+        animation: active 0.5s ease-in-out;
     }
 }
 
@@ -223,6 +231,6 @@ footer {
     height: 16vw;
     background-color: #fff;
 }
-.am-drawer-overlay {
-    background-color: transparent !important;
+.am-drawer-content {
+    padding-top: 29.867vw !important;
 }

@@ -66,6 +66,27 @@
     }
 }
 
+/**
+* 购物车动画
+*/
+@keyframes active {
+    from,
+    50%,
+    100% {
+        -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
 /*!
  * animate.css -https://daneden.github.io/animate.css/
  * Version - 3.7.2

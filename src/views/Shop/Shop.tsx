@@ -30,6 +30,8 @@ type StateType = {
     miniPrice: number;
     count: number;
     open: boolean;
+    animate: string;
+    timer: number | null;
 };
 
 class Shop extends React.Component<any, StateType> {
@@ -37,6 +39,7 @@ class Shop extends React.Component<any, StateType> {
         super(props);
         this.state = {
             open: false, // 弹窗
+            timer: null,
             foods: null, // 菜单信息
             detail: null, // 商家信息
             menu: [], // 菜单类型
@@ -47,6 +50,7 @@ class Shop extends React.Component<any, StateType> {
             totalPrice: 0, // 总价
             miniPrice: 0,
             count: 0,
+            animate: 'cart',
         };
     }
 
@@ -121,12 +125,21 @@ class Shop extends React.Component<any, StateType> {
         list.forEach((item) => {
             total = total + item.specfoods[0].price * item.qty;
         });
-        console.log(total);
 
         this.setState({
             foodList: foods,
             selectList: list,
             totalPrice: total,
+            animate: this.state.animate + ' cart-animate',
+            miniPrice: (this.state.detail && this.state.detail.float_minimum_order_amount - total) ?? 20,
+        });
+        const timer = setTimeout(() => {
+            this.setState({
+                animate: 'cart',
+            });
+        }, 200);
+        this.setState({
+            timer,
         });
     };
 
@@ -134,9 +147,20 @@ class Shop extends React.Component<any, StateType> {
         this.init();
     }
 
+    componentWillUnmount() {
+        this.state.timer && clearTimeout(this.state.timer);
+        this.setState({
+            timer: null,
+        });
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return !is(fromJS(this.props), fromJS(nextProps)) || !is(fromJS(this.state), fromJS(nextState));
+    }
+
     render() {
         const tabs = [{ title: '商品' }, { title: '评价' }];
-        const { detail, menu, selected, foods, miniPrice, selectList, totalPrice } = this.state;
+        const { detail, menu, selected, foods, miniPrice, selectList, totalPrice, animate, foodList } = this.state;
 
         const sidebar = (
             <div>
@@ -145,13 +169,27 @@ class Shop extends React.Component<any, StateType> {
                     <span>清空</span>
                 </div>
                 <ul>
-                    <li>
-                        <div>1</div>
-                        <div>
-                            <span>¥24</span>
-                            <Stepper showNumber defaultValue={0} min={0} />
-                        </div>
-                    </li>
+                    {selectList.length
+                        ? selectList.map((element, index) => {
+                              return (
+                                  <li key={index}>
+                                      <div>{element.specfoods[0].name}</div>
+                                      <div>
+                                          <span>¥{element.specfoods[0].price}</span>
+                                          <Stepper
+                                              showNumber
+                                              value={foodList[element.num].qty}
+                                              defaultValue={foodList[element.num].qty}
+                                              min={0}
+                                              onChange={(e) => {
+                                                  this.changeNum(e, element);
+                                              }}
+                                          />
+                                      </div>
+                                  </li>
+                              );
+                          })
+                        : null}
                 </ul>
                 <div className='block'></div>
             </div>
@@ -211,124 +249,6 @@ class Shop extends React.Component<any, StateType> {
                     <ShopHeaderSkeleton history={this.props.history} />
                 )}
 
-                {/* 菜单 */}
-                <main>
-                    <Tabs
-                        tabs={tabs}
-                        initialPage={0}
-                        onChange={(tab, index) => {
-                            console.log('onChange', index, tab);
-                        }}
-                        onTabClick={(tab, index) => {
-                            console.log('onTabClick', index, tab);
-                        }}
-                    >
-                        {menu && menu.length ? (
-                            <div className='content'>
-                                <ul className='nav'>
-                                    {Array.isArray(menu) && menu.length
-                                        ? menu.map((item, index) => {
-                                              return (
-                                                  <li
-                                                      className={classnames({ active: selected === index })}
-                                                      key={item.id}
-                                                      onClick={() => {
-                                                          this.onSelected(index);
-                                                      }}
-                                                  >
-                                                      {item.name}
-                                                  </li>
-                                              );
-                                          })
-                                        : null}
-                                </ul>
-                                <div className='good-list'>
-                                    <h3>
-                                        {foods && (foods.name ?? '默认')}
-                                        <span>{foods && foods.description}</span>
-                                    </h3>
-
-                                    <ul>
-                                        {foods && Array.isArray(foods.foods) && foods.foods.length
-                                            ? foods.foods.map((item: any, index: number) => {
-                                                  return (
-                                                      <li key={item._id}>
-                                                          <Badge
-                                                              text={this.getBadge(item.attributes) ? '新' : ''}
-                                                              corner
-                                                          >
-                                                              <img src={imgUrl + item.image_path} alt='菜品' />
-                                                              <div>
-                                                                  <h5>
-                                                                      {item.name}
-                                                                      {this.getBadge(item.attributes)
-                                                                          ? null
-                                                                          : Array.isArray(item.attributes) &&
-                                                                            item.attributes.length
-                                                                          ? item.attributes.map(
-                                                                                (i: any, index: number) => {
-                                                                                    return (
-                                                                                        <span
-                                                                                            style={{
-                                                                                                color: `#${i.icon_color}`,
-                                                                                            }}
-                                                                                            key={index}
-                                                                                        >
-                                                                                            {i.icon_name}
-                                                                                        </span>
-                                                                                    );
-                                                                                }
-                                                                            )
-                                                                          : null}
-                                                                  </h5>
-                                                                  <p>{item.description}</p>
-                                                                  <p>{item.tips}</p>
-                                                                  <span
-                                                                      style={{
-                                                                          color: `#${
-                                                                              item.activity &&
-                                                                              item.activity.image_text_color
-                                                                          }`,
-                                                                      }}
-                                                                  >
-                                                                      {item.activity && item.activity.image_text}
-                                                                  </span>
-                                                                  <div>
-                                                                      <span className='good-price'>
-                                                                          ￥{item.specfoods[0].price}
-                                                                          {Array.isArray(item.specifications) &&
-                                                                          item.specifications.length
-                                                                              ? '起'
-                                                                              : ''}
-                                                                      </span>
-                                                                      <Stepper
-                                                                          defaultValue={0}
-                                                                          showNumber
-                                                                          min={0}
-                                                                          onChange={(e) => {
-                                                                              this.changeNum(e, item);
-                                                                          }}
-                                                                      />
-                                                                  </div>
-                                                              </div>
-                                                          </Badge>
-                                                      </li>
-                                                  );
-                                              })
-                                            : null}
-                                    </ul>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className='content'>
-                                <ShopDetailSkeleton />
-                            </div>
-                        )}
-
-                        <div className='content'>Content of second tab</div>
-                    </Tabs>
-                </main>
-
                 {/* load页面 */}
                 {menu && !menu.length ? (
                     <div className='detail-loader-box'>
@@ -337,20 +257,138 @@ class Shop extends React.Component<any, StateType> {
                 ) : null}
 
                 {/* 选中弹窗 */}
-                {/* <Drawer
+                <Drawer
                     className='order-drawer'
-                    enableDragHandle
                     contentStyle={{ color: '#A6A6A6', textAlign: 'center', paddingTop: 42 }}
                     sidebar={sidebar}
                     position='bottom'
                     open={this.state.open}
-                /> */}
+                >
+                    {/* 菜单 */}
+                    <main>
+                        <Tabs
+                            tabs={tabs}
+                            initialPage={0}
+                            onChange={(tab, index) => {
+                                console.log('onChange', index, tab);
+                            }}
+                            onTabClick={(tab, index) => {
+                                console.log('onTabClick', index, tab);
+                            }}
+                        >
+                            {menu && menu.length ? (
+                                <div className='content'>
+                                    <ul className='nav'>
+                                        {Array.isArray(menu) && menu.length
+                                            ? menu.map((item, index) => {
+                                                  return (
+                                                      <li
+                                                          className={classnames({ active: selected === index })}
+                                                          key={item.id}
+                                                          onClick={() => {
+                                                              this.onSelected(index);
+                                                          }}
+                                                      >
+                                                          {item.name}
+                                                      </li>
+                                                  );
+                                              })
+                                            : null}
+                                    </ul>
+                                    <div className='good-list'>
+                                        <h3>
+                                            {foods && (foods.name ?? '默认')}
+                                            <span>{foods && foods.description}</span>
+                                        </h3>
+
+                                        <ul>
+                                            {foods && Array.isArray(foods.foods) && foods.foods.length
+                                                ? foods.foods.map((item: any, index: number) => {
+                                                      return (
+                                                          <li key={item._id}>
+                                                              <Badge
+                                                                  text={this.getBadge(item.attributes) ? '新' : ''}
+                                                                  corner
+                                                              >
+                                                                  <img src={imgUrl + item.image_path} alt='菜品' />
+                                                                  <div>
+                                                                      <h5>
+                                                                          {item.name}
+                                                                          {this.getBadge(item.attributes)
+                                                                              ? null
+                                                                              : Array.isArray(item.attributes) &&
+                                                                                item.attributes.length
+                                                                              ? item.attributes.map(
+                                                                                    (i: any, index: number) => {
+                                                                                        return (
+                                                                                            <span
+                                                                                                style={{
+                                                                                                    color: `#${i.icon_color}`,
+                                                                                                }}
+                                                                                                key={index}
+                                                                                            >
+                                                                                                {i.icon_name}
+                                                                                            </span>
+                                                                                        );
+                                                                                    }
+                                                                                )
+                                                                              : null}
+                                                                      </h5>
+                                                                      <p>{item.description}</p>
+                                                                      <p>{item.tips}</p>
+                                                                      <span
+                                                                          style={{
+                                                                              color: `#${
+                                                                                  item.activity &&
+                                                                                  item.activity.image_text_color
+                                                                              }`,
+                                                                          }}
+                                                                      >
+                                                                          {item.activity && item.activity.image_text}
+                                                                      </span>
+                                                                      <div>
+                                                                          <span className='good-price'>
+                                                                              ￥{item.specfoods[0].price}
+                                                                              {Array.isArray(item.specifications) &&
+                                                                              item.specifications.length
+                                                                                  ? '起'
+                                                                                  : ''}
+                                                                          </span>
+                                                                          <Stepper
+                                                                              defaultValue={foodList[item.num].qty}
+                                                                              value={foodList[item.num].qty}
+                                                                              showNumber
+                                                                              min={0}
+                                                                              onChange={(e) => {
+                                                                                  this.changeNum(e, item);
+                                                                              }}
+                                                                          />
+                                                                      </div>
+                                                                  </div>
+                                                              </Badge>
+                                                          </li>
+                                                      );
+                                                  })
+                                                : null}
+                                        </ul>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className='content'>
+                                    <ShopDetailSkeleton />
+                                </div>
+                            )}
+
+                            <div className='content'>Content of second tab</div>
+                        </Tabs>
+                    </main>
+                </Drawer>
 
                 {/* 下单 */}
                 <footer>
                     <div className='pay-price'>
                         <div
-                            className='cart'
+                            className={animate}
                             style={{ backgroundColor: selectList.length ? '#3190e8' : '#3d3d3f' }}
                             onClick={() => {
                                 this.setState({ open: !this.state.open });
@@ -369,7 +407,7 @@ class Shop extends React.Component<any, StateType> {
                             <p>配送费¥{detail && detail.float_delivery_fee}</p>
                         </div>
                     </div>
-                    {selectList.length ? (
+                    {miniPrice <= 0 ? (
                         <div className='pay-btn gopay-btn'>去结算</div>
                     ) : (
                         <div className='pay-btn'>还差¥{miniPrice}起送</div>
