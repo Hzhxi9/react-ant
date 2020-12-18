@@ -8,6 +8,7 @@ import ShopHeaderSkeleton from '../../components/ShopHeaderSkeleton';
 import ShopDetailSkeleton from '../../components/ShopDetailSkeleton';
 
 import { connect } from 'react-redux';
+import { saveGoods } from '../../actions/goods';
 import { imgUrl } from '../../configs/envconfig';
 import { getUrlParams } from '../../utils';
 import { fromJS, is } from 'immutable';
@@ -118,6 +119,7 @@ class Shop extends React.Component<any, StateType> {
         const index = foods.findIndex((e) => e._id === item._id);
         foods[index].qty = e;
 
+        console.log('e', e);
         let list = [];
         list = foods.filter((item) => item.qty > 0);
 
@@ -125,6 +127,12 @@ class Shop extends React.Component<any, StateType> {
         list.forEach((item) => {
             total = total + item.specfoods[0].price * item.qty;
         });
+
+        this.props.saveGoods(list);
+
+        if (!list.length) {
+            this.clear();
+        }
 
         this.setState({
             foodList: foods,
@@ -144,7 +152,15 @@ class Shop extends React.Component<any, StateType> {
     };
 
     clear = () => {
-        console.log('111');
+        this.setState({
+            foodList: fromJS(this.state.initList).toJS(),
+            totalPrice: 0,
+            miniPrice: this.state.detail ? this.state.detail.float_minimum_order_amount : 20,
+            count: 0,
+            selectList: [],
+            open: false,
+        });
+        this.props.saveGoods([])
     };
 
     componentDidMount() {
@@ -395,7 +411,7 @@ class Shop extends React.Component<any, StateType> {
                             className={animate}
                             style={{ backgroundColor: selectList.length ? '#3190e8' : '#3d3d3f' }}
                             onClick={() => {
-                                this.setState({ open: !this.state.open });
+                                selectList.length && this.setState({ open: !this.state.open });
                             }}
                         >
                             {selectList.length ? (
@@ -412,7 +428,7 @@ class Shop extends React.Component<any, StateType> {
                         </div>
                     </div>
                     {miniPrice <= 0 ? (
-                        <div className='pay-btn gopay-btn'>去结算</div>
+                        <div className='pay-btn gopay-btn' onClick={() => {this.props.history.push('/order')}}>去结算</div>
                     ) : (
                         <div className='pay-btn'>还差¥{miniPrice}起送</div>
                     )}
@@ -428,4 +444,12 @@ const mapStateToProps = (state: any) => {
     };
 };
 
-export default connect(mapStateToProps)(Shop);
+const mapDiatchToProps = (dispatch: any) => {
+    return {
+        saveGoods: (data: any) => {
+            dispatch(saveGoods(data));
+        },
+    };
+};
+
+export default connect(mapStateToProps, mapDiatchToProps)(Shop);

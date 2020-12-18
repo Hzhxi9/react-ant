@@ -34,3 +34,4 @@ export const modifyUserInfo = (data: { key: string; value: string }) => {
         value,
     };
 };
+
