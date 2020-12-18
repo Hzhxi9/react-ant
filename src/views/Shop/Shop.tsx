@@ -143,6 +143,10 @@ class Shop extends React.Component<any, StateType> {
         });
     };
 
+    clear = () => {
+        console.log('111');
+    };
+
     componentDidMount() {
         this.init();
     }
@@ -166,7 +170,7 @@ class Shop extends React.Component<any, StateType> {
             <div>
                 <div className='title-box'>
                     <span>购物车</span>
-                    <span>清空</span>
+                    <span onClick={this.clear}>清空</span>
                 </div>
                 <ul>
                     {selectList.length
