@@ -83,6 +83,9 @@ class Shop extends React.Component<any, StateType> {
         }
     };
 
+    /**
+     * 添加商品数量和标记
+     */
     setNumOfMenu = (menu: ResTypes.MenuData[]) => {
         let count = 0;
         menu.forEach((i: { foods: { num: number; qty: number }[] }) => {
@@ -95,6 +98,9 @@ class Shop extends React.Component<any, StateType> {
         return menu;
     };
 
+    /**
+     * 遍历所有商品，以便获取所有商品数量和价格
+     */
     setFoodList = (menu: ResTypes.MenuData[]): ResTypes.ShopData[] => {
         let list: ResTypes.ShopData[] = [];
         menu.forEach((item) => {
@@ -107,6 +113,9 @@ class Shop extends React.Component<any, StateType> {
         return !!value.find((item) => item.icon_name === '新');
     };
 
+    /**
+     * tab选择商品
+     */
     onSelected = (index: number) => {
         this.setState({
             selected: index,
@@ -114,12 +123,14 @@ class Shop extends React.Component<any, StateType> {
         });
     };
 
+    /**
+     * 选择商品数量
+     */
     changeNum = (e: number, item: ResTypes.ShopData) => {
         const foods = this.state.foodList;
         const index = foods.findIndex((e) => e._id === item._id);
         foods[index].qty = e;
 
-        console.log('e', e);
         let list = [];
         list = foods.filter((item) => item.qty > 0);
 
@@ -151,6 +162,9 @@ class Shop extends React.Component<any, StateType> {
         });
     };
 
+    /**
+     * 清空购物车
+     */
     clear = () => {
         this.setState({
             foodList: fromJS(this.state.initList).toJS(),
@@ -160,13 +174,16 @@ class Shop extends React.Component<any, StateType> {
             selectList: [],
             open: false,
         });
-        this.props.saveGoods([])
+        this.props.saveGoods([]);
     };
 
     componentDidMount() {
         this.init();
     }
 
+    /**
+     * 页面卸载定时器
+     */
     componentWillUnmount() {
         this.state.timer && clearTimeout(this.state.timer);
         this.setState({
@@ -428,7 +445,14 @@ class Shop extends React.Component<any, StateType> {
                         </div>
                     </div>
                     {miniPrice <= 0 ? (
-                        <div className='pay-btn gopay-btn' onClick={() => {this.props.history.push('/order')}}>去结算</div>
+                        <div
+                            className='pay-btn gopay-btn'
+                            onClick={() => {
+                                this.props.history.push('/order');
+                            }}
+                        >
+                            去结算
+                        </div>
                     ) : (
                         <div className='pay-btn'>还差¥{miniPrice}起送</div>
                     )}

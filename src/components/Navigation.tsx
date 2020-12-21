@@ -44,7 +44,7 @@ class Navigation extends React.Component<
                     icon: <img src={OrderIcon} alt='订单' />,
                     activeIcon: <img src={OrderActiveIcon} alt='订单' />,
                     title: '订单',
-                    path: '/',
+                    path: '/order',
                 },
                 {
                     icon: <img src={MineIcon} alt='我的' />,

@@ -1,0 +1,39 @@
+.order-box {
+    height: calc(100vh - 45px - 50px);
+    overflow: auto;
+    li {
+        display: flex;
+        align-items: center;
+        padding: 2.667vw;
+        img {
+            width: 26.667vw;
+            height: 26.667vw;
+        }
+        div {
+            &:last-child {
+                flex: 1;
+                margin-left: 2.667vw;
+                p {
+                    &:last-child {
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                }
+            }
+        }
+    }
+}
+.order-empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    img {
+        width: 42.667vw;
+        height: 42.667vw;
+    }
+    p {
+        padding-top: 5.333vw;
+        color: #999;
+    }
+}
